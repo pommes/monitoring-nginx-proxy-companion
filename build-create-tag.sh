@@ -1,3 +1,3 @@
 #!/usr/bin/env bash
 
-git tag -a 2023-2
+git tag -a 2023-3

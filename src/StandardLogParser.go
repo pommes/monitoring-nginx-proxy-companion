@@ -5,6 +5,7 @@ import (
 	"log"
 	"regexp"
 	"strconv"
+	"strings"
 	"time"
 )
 
@@ -13,7 +14,7 @@ type StandardLogParser struct {
 	ipLookupService IIpLookupService
 }
 
-const LOG_LINE_REGEX = `\s*(\S+)\s+(\S+).+\[(.+)\]\s+"([^"]+)"\s+(\S+)\s+(\S+)\s+"([^"]+)"\s+"([^"]+)"($|\s+(\S+))`
+const LOG_LINE_REGEX = `\s*(\S+)\s+(\S+).+\[(.+)\]\s+"([^"]+)"\s+(\S+)\s+(\S+)\s+"([^"]+)"\s+"([^"]+)"($|\s+"([^"]+)"$|\s+([0-9.]+)$)`
 
 const STANDARD_LOG_LINE_DATE_FORMAT = "02/Jan/2006:15:04:05 +0000"
 
@@ -50,16 +51,19 @@ func (standardLogParser StandardLogParser) Parse(logLine string) (HttpRequest, e
 	userAgent := logLineParserRegexResult[regexFieldIndex]
 
 	regexFieldIndex += 2
-	latency := logLineParserRegexResult[regexFieldIndex]
+	lastField := logLineParserRegexResult[regexFieldIndex]
 
 	var latencyFloat float64
-	if latency != "" {
+	var xForwardedFor string
+	if lastField != "" {
 		var err error
-		latencyFloat, err = strconv.ParseFloat(latency, 64)
+		latencyFloat, err = strconv.ParseFloat(lastField, 64)
+		xForwardedFor = ""
 		if err != nil {
-			log.Println("Could not parse float, reason: ", err)
-			// TODO: Latency does not work with my log format. Workaround so no fatal eror kills the whole skript.
+			// Non-parsable as float because it contains a non-number
+			//log.Println("ERROR: reason:", err)
 			latencyFloat = 0
+			xForwardedFor = strings.Replace(lastField, "\\\"", "", -1)
 		}
 	}
 
@@ -75,6 +79,7 @@ func (standardLogParser StandardLogParser) Parse(logLine string) (HttpRequest, e
 	httpRequest.httpReferer = httpReferer
 	httpRequest.userAgent = userAgent
 	httpRequest.latency = latencyFloat
+	httpRequest.xForwardedFor = xForwardedFor
 
 	parseUserAgentAndSetFields(standardLogParser.userAgentParser, userAgent, &httpRequest)
 	lookupIpAndSetFields(standardLogParser.ipLookupService, remoteAddress, &httpRequest)
