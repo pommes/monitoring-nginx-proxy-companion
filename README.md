@@ -11,9 +11,9 @@ Be sure to have the correct user-defined network set and adapt `PROXY_CONTAINER_
 name. (the full `docker-compose.yml` can be found in the root of this repository)
 
 ```yml
-monitoring-nginx-proxy-companion:
-    image: lukaskroepfl/monitoring-nginx-proxy-companion
-    depends_on:INFLUX_URL
+  monitoring-nginx-proxy-companion:
+    image: tyranus/monitoring-nginx-proxy-companion
+    depends_on:
       - monitoring-influx-db
       - nginx-proxy
     restart: always
@@ -22,6 +22,7 @@ monitoring-nginx-proxy-companion:
       - PROXY_CONTAINER_NAME=nginx-proxy
       - INFLUX_URL=http://monitoring-influx-db:8086
       - INFLUX_DB_NAME=monitoring
+      - INFLUX_DB_TAG_INSTANCE=my-instance
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
     networks:
@@ -36,20 +37,21 @@ monitoring-nginx-proxy-companion:
     networks:
       - proxy-tier
       
-    monitoring-grafana:
-      image: grafana/grafana
-      restart: always
-      container_name: monitoring-grafana
-      ports:
-        - "3000:3000"
-      environment:
-        - GF_SERVER_ROOT_URL=http://your_host
-        - GF_SECURITY_ADMIN_PASSWORD=your_password
-      networks:
-        - proxy-tier
+  monitoring-grafana:
+    image: grafana/grafana
+    restart: always
+    container_name: monitoring-grafana
+    ports:
+    - "3000:3000"
+    environment:
+    - GF_SERVER_ROOT_URL=http://your_host
+    - GF_SECURITY_ADMIN_PASSWORD=your_password
+    networks:
+    - proxy-tier
 ```
 
-The `monitoring-nginx-proxy-companion` creates a influxdb database on startup with the name set by `INFLUX_DB_NAME` if necessary.
+The `monitoring-nginx-proxy-companion` creates an influxdb database on startup with the name set by `INFLUX_DB_NAME` if necessary.
+The variable `INFLUX_DB_TAG_INSTANCE` is used for *tagging* each InfluxDB entry with any passed value. This can be useful if you want to store data from different proxy instances in one InfluxDB (`INFLUX_DB_NAME`). Grafana has a common use pattern of repeating panels for different instances. This way it can be done with only one Grafana Datasource.
 
 ### 2) Start Services
 

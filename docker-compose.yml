@@ -51,6 +51,7 @@ services:
       - PROXY_CONTAINER_NAME=nginx-proxy
       - INFLUX_URL=http://monitoring-influx-db:8086
       - INFLUX_DB_NAME=monitoring
+      - INFLUX_DB_TAG_INSTANCE=my-instance
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
     networks:
