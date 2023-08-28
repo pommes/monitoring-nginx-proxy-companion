@@ -14,7 +14,7 @@ type StandardLogParser struct {
 	ipLookupService IIpLookupService
 }
 
-const LOG_LINE_REGEX = `\s*(\S+)\s+(\S+).+\[(.+)\]\s+"([^"]+)"\s+(\S+)\s+(\S+)\s+"([^"]+)"\s+"([^"]+)"($|\s+"([^"]+)"$|\s+([0-9.]+)$)`
+const LOG_LINE_REGEX = `^\s*(\S+)\s+(\S+).+\[(.+)\]\s+"([^"]+)"\s+(\S+)\s+(\S+)\s+"([^"]+)"\s+"([^"]+)"($|\s+"([^"]+)"|\s+([0-9.]+))`
 
 const STANDARD_LOG_LINE_DATE_FORMAT = "02/Jan/2006:15:04:05 +0000"
 
@@ -78,7 +78,7 @@ func (standardLogParser StandardLogParser) Parse(logLine string) (HttpRequest, e
 	httpRequest.bodyBytesSent = bodyBytesSent
 	httpRequest.httpReferer = httpReferer
 	httpRequest.userAgent = userAgent
-	httpRequest.latency = latencyFloat
+	httpRequest.latency = int(latencyFloat)
 	httpRequest.xForwardedFor = xForwardedFor
 
 	parseUserAgentAndSetFields(standardLogParser.userAgentParser, userAgent, &httpRequest)

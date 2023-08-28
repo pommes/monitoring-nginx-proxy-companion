@@ -69,7 +69,7 @@ func (influxLogPersistor InfluxdbHttpRequestPersistor) Persist(httpRequest HttpR
 	batchPoints.AddPoint(point)
 
 	if err := influxLogPersistor.influxClient.Write(batchPoints); err != nil {
-		log.Println("Could not insert into influx .")
+		log.Println("Could not insert into influx, reason:", err)
 		return
 	}
 }

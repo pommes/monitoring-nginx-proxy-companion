@@ -19,7 +19,7 @@ type HttpRequest struct {
 	mobile         bool
 	country        string
 	city           string
-	latency        float64
+	latency        int
 	xForwardedFor  string
 }
 
