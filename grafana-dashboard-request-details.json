@@ -1,0 +1,549 @@
+{
+  "annotations": {
+    "list": [
+      {
+        "builtIn": 1,
+        "datasource": {
+          "type": "grafana",
+          "uid": "-- Grafana --"
+        },
+        "enable": true,
+        "hide": true,
+        "iconColor": "rgba(0, 211, 255, 1)",
+        "name": "Annotations & Alerts",
+        "type": "dashboard"
+      }
+    ]
+  },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "id": 26,
+  "links": [],
+  "liveNow": false,
+  "panels": [
+    {
+      "datasource": {
+        "type": "influxdb",
+        "uid": "b38c69e3-73a6-43b0-9198-47fc0ed37c57"
+      },
+      "description": "",
+      "fieldConfig": {
+        "defaults": {
+          "color": {
+            "mode": "thresholds"
+          },
+          "custom": {
+            "align": "left",
+            "cellOptions": {
+              "type": "auto"
+            },
+            "filterable": true,
+            "inspect": false
+          },
+          "mappings": [
+            {
+              "options": {
+                "101000": {
+                  "index": 0,
+                  "text": "Switching Protocols"
+                },
+                "200000": {
+                  "index": 1,
+                  "text": "OK"
+                },
+                "206000": {
+                  "index": 2,
+                  "text": "Partial Content"
+                },
+                "301000": {
+                  "index": 3,
+                  "text": "Moved Permanently"
+                },
+                "302000": {
+                  "index": 4,
+                  "text": "Found (Moved Temporarily)"
+                },
+                "304000": {
+                  "index": 5,
+                  "text": "Not Modified"
+                },
+                "307000": {
+                  "index": 6,
+                  "text": "Temporary Redirect"
+                },
+                "308000": {
+                  "index": 7,
+                  "text": "Permanent Redirect"
+                },
+                "400000": {
+                  "index": 8,
+                  "text": "Bad Request"
+                },
+                "401000": {
+                  "index": 9,
+                  "text": "Unauthorized"
+                },
+                "403000": {
+                  "index": 10,
+                  "text": "Forbidden"
+                },
+                "404000": {
+                  "index": 11,
+                  "text": "Not Found"
+                },
+                "499000": {
+                  "index": 16,
+                  "text": "The request should be retried after doing the appropriate action"
+                },
+                "500000": {
+                  "index": 12,
+                  "text": "Internal Server Error"
+                },
+                "501000": {
+                  "index": 13,
+                  "text": "Not Implemented"
+                },
+                "502000": {
+                  "index": 14,
+                  "text": "Bad Gateway"
+                },
+                "503000": {
+                  "index": 15,
+                  "text": "Service Unavailable"
+                }
+              },
+              "type": "value"
+            }
+          ],
+          "thresholds": {
+            "mode": "absolute",
+            "steps": [
+              {
+                "color": "green",
+                "value": null
+              },
+              {
+                "color": "red",
+                "value": 80
+              }
+            ]
+          }
+        },
+        "overrides": [
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "http_status"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 129
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "request_method"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 152
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "request_path"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 470
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Time"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 186
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "source_ip"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 313
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "host"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 411
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "HTTP Status Name"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 245
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Request Target Host"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 283
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "HTTP Mehtod"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 128
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Request Target Path"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 713
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Bot?"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 70
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "User Agent"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 168
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Client"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 164
+              }
+            ]
+          },
+          {
+            "matcher": {
+              "id": "byName",
+              "options": "Country"
+            },
+            "properties": [
+              {
+                "id": "custom.width",
+                "value": 150
+              }
+            ]
+          }
+        ]
+      },
+      "gridPos": {
+        "h": 29,
+        "w": 24,
+        "x": 0,
+        "y": 0
+      },
+      "id": 1,
+      "options": {
+        "cellHeight": "sm",
+        "footer": {
+          "countRows": false,
+          "enablePagination": false,
+          "fields": "",
+          "reducer": [
+            "sum"
+          ],
+          "show": false
+        },
+        "showHeader": true,
+        "sortBy": [
+          {
+            "desc": true,
+            "displayName": "Time"
+          }
+        ]
+      },
+      "pluginVersion": "10.1.0",
+      "targets": [
+        {
+          "datasource": {
+            "type": "influxdb",
+            "uid": "b38c69e3-73a6-43b0-9198-47fc0ed37c57"
+          },
+          "groupBy": [],
+          "measurement": "http_requests",
+          "orderByTime": "ASC",
+          "policy": "default",
+          "query": "SELECT \"http_status\", \"source_ip\", \"country\", \"bot\", \"browser\", \"request_method\", \"host\", \"request_path\" FROM \"http_requests\" WHERE (\"http_status\"::tag =~ /$http_status/ AND \"instance\"::tag = 'tyranus.de' AND \"host\"::tag =~ /$request_target/) AND $timeFilter",
+          "rawQuery": true,
+          "refId": "A",
+          "resultFormat": "table",
+          "select": [
+            [
+              {
+                "params": [
+                  "source_ip"
+                ],
+                "type": "field"
+              }
+            ],
+            [
+              {
+                "params": [
+                  "request_path"
+                ],
+                "type": "field"
+              }
+            ],
+            [
+              {
+                "params": [
+                  "user_agent"
+                ],
+                "type": "field"
+              }
+            ]
+          ],
+          "tags": [
+            {
+              "key": "http_status::tag",
+              "operator": "=~",
+              "value": "/^5..$/"
+            },
+            {
+              "condition": "AND",
+              "key": "instance::tag",
+              "operator": "=",
+              "value": "tyranus.de"
+            },
+            {
+              "condition": "AND",
+              "key": "host::tag",
+              "operator": "=~",
+              "value": "/zahlensender.net/"
+            }
+          ]
+        }
+      ],
+      "title": "HTTP Request Details",
+      "transformations": [
+        {
+          "id": "convertFieldType",
+          "options": {
+            "conversions": [
+              {
+                "destinationType": "number",
+                "targetField": "http_status"
+              }
+            ],
+            "fields": {}
+          }
+        },
+        {
+          "id": "calculateField",
+          "options": {
+            "alias": "http_status_name",
+            "binary": {
+              "left": "http_status",
+              "operator": "*",
+              "reducer": "sum",
+              "right": "1000"
+            },
+            "mode": "binary",
+            "reduce": {
+              "reducer": "sum"
+            },
+            "replaceFields": false
+          }
+        },
+        {
+          "id": "organize",
+          "options": {
+            "excludeByName": {
+              "Time": false,
+              "request_method": false
+            },
+            "indexByName": {
+              "Time": 0,
+              "bot": 5,
+              "browser": 6,
+              "country": 4,
+              "host": 8,
+              "http_status": 1,
+              "http_status_name": 2,
+              "request_method": 7,
+              "request_path": 9,
+              "source_ip": 3
+            },
+            "renameByName": {
+              "HTTP Status Name": "",
+              "Time": "",
+              "bot": "Bot?",
+              "browser": "Client",
+              "country": "Country",
+              "host": "Request Target Host",
+              "http_status": "HTTP Status",
+              "http_status_name": "HTTP Status Name",
+              "request_method": "HTTP Mehtod",
+              "request_path": "Request Target Path",
+              "source_ip": "Source IP",
+              "user_agent": "User Agent"
+            }
+          }
+        }
+      ],
+      "type": "table"
+    }
+  ],
+  "refresh": "",
+  "schemaVersion": 38,
+  "style": "dark",
+  "tags": [
+    "http"
+  ],
+  "templating": {
+    "list": [
+      {
+        "current": {
+          "selected": true,
+          "text": [
+            "zahlensender.net"
+          ],
+          "value": [
+            "zahlensender.net"
+          ]
+        },
+        "datasource": {
+          "type": "influxdb",
+          "uid": "b38c69e3-73a6-43b0-9198-47fc0ed37c57"
+        },
+        "definition": "SHOW TAG VALUES FROM \"http_requests\" WITH KEY = \"host\"",
+        "hide": 0,
+        "includeAll": true,
+        "label": "Request Target",
+        "multi": true,
+        "name": "request_target",
+        "options": [],
+        "query": "SHOW TAG VALUES FROM \"http_requests\" WITH KEY = \"host\"",
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      },
+      {
+        "current": {
+          "selected": true,
+          "text": [
+            "101",
+            "400",
+            "401",
+            "409",
+            "500",
+            "503"
+          ],
+          "value": [
+            "101",
+            "400",
+            "401",
+            "409",
+            "500",
+            "503"
+          ]
+        },
+        "datasource": {
+          "type": "influxdb",
+          "uid": "b38c69e3-73a6-43b0-9198-47fc0ed37c57"
+        },
+        "definition": "SHOW TAG VALUES FROM \"http_requests\" WITH KEY = \"http_status\"",
+        "description": "",
+        "hide": 0,
+        "includeAll": true,
+        "label": "HTTP Status",
+        "multi": true,
+        "name": "http_status",
+        "options": [],
+        "query": "SHOW TAG VALUES FROM \"http_requests\" WITH KEY = \"http_status\"",
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      }
+    ]
+  },
+  "time": {
+    "from": "now-6h",
+    "to": "now"
+  },
+  "timepicker": {},
+  "timezone": "",
+  "title": "HTTP Proxy Request Details",
+  "uid": "a233125f-5389-4573-bb2c-0bb5f76a6cfc",
+  "version": 12,
+  "weekStart": ""
+}

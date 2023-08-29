@@ -1,4 +1,4 @@
-# nginx-proxy-metrics [![Build Status](https://travis-ci.org/lukaskroepfl/nginx-proxy-metrics.svg?branch=master)](https://travis-ci.org/lukaskroepfl/nginx-proxy-metrics) [![Docker Pulls](https://img.shields.io/docker/pulls/lukaskroepfl/nginx-proxy-metrics.svg)]()
+# nginx-proxy-metrics 
 
 nginx-proxy-metrics is a lightweight companion container for the [nginx-proxy](https://github.com/jwilder/nginx-proxy).
 
@@ -62,12 +62,16 @@ docker-compose up -d
 
 ### 3) Add Grafana Datasource
 
-![add-datasource](https://raw.githubusercontent.com/lukaskroepfl/nginx-proxy-metrics/master/add-influx-datasource.png)
+![add-datasource](grafana-add-influx-datasource.png)
 
 ### 4) Add Nginx Proxy Monitoring Dashboard
 
-You can simply import the dashboard I created by importing following json.
+You can simply import the dashboard I created by importing following json files:
 
-`https://raw.githubusercontent.com/lukaskroepfl/nginx-proxy-metrics/master/grafana-dashboard.json`
+[grafana-dashboard.json](https://raw.githubusercontent.com/pommes/nginx-proxy-metrics/master/grafana-dashboard.json)
 
-![add-datasource](https://raw.githubusercontent.com/lukaskroepfl/nginx-proxy-metrics/master/dashboard.png)
+![Grafana Dashboard](grafana-dashboard.png)
+
+[grafana-dashboard-request-details.json](https://raw.githubusercontent.com/pommes/nginx-proxy-metrics/master/grafana-dashboard-request-details.json)
+
+![Grafana Dashboard Request Details](grafana-dashboard-request-details.png)
