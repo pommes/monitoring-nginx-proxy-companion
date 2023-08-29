@@ -5,7 +5,7 @@ go 1.21.0
 require (
 	github.com/fsouza/go-dockerclient v1.9.8
 	github.com/influxdata/influxdb1-client v0.0.0-20220302092344-a9ab5670611c
-	github.com/mssola/user_agent v0.6.0
+	github.com/mssola/useragent v1.0.0
 	github.com/oschwald/geoip2-golang v1.9.0
 	github.com/stretchr/testify v1.8.4
 )

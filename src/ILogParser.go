@@ -19,8 +19,9 @@ type HttpRequest struct {
 	mobile         bool
 	country        string
 	city           string
-	latency        int
+	latency        float64
 	xForwardedFor  string
+	bot            bool
 }
 
 type ILogParser interface {

@@ -78,7 +78,7 @@ func (standardLogParser StandardLogParser) Parse(logLine string) (HttpRequest, e
 	httpRequest.bodyBytesSent = bodyBytesSent
 	httpRequest.httpReferer = httpReferer
 	httpRequest.userAgent = userAgent
-	httpRequest.latency = int(latencyFloat)
+	httpRequest.latency = latencyFloat
 	httpRequest.xForwardedFor = xForwardedFor
 
 	parseUserAgentAndSetFields(standardLogParser.userAgentParser, userAgent, &httpRequest)
@@ -94,6 +94,7 @@ func parseUserAgentAndSetFields(userAgentParser IUserAgentParser, userAgentStrin
 	httpRequest.browserVersion = userAgent.browserVersion
 	httpRequest.os = userAgent.os
 	httpRequest.mobile = userAgent.mobile
+	httpRequest.bot = userAgent.bot
 }
 
 func lookupIpAndSetFields(ipLookupService IIpLookupService, ip string, httpRequest *HttpRequest) {
