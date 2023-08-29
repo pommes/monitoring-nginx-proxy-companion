@@ -1,4 +1,4 @@
-package main
+package geoip
 
 import (
 	"github.com/oschwald/geoip2-golang"
@@ -24,8 +24,8 @@ func (geoIp2IPLookupService GeoIp2IpLookupService) Lookup(ip string) IPLocation 
 
 	ipLocation := IPLocation{}
 
-	ipLocation.country = record.Country.Names["en"]
-	ipLocation.city = record.City.Names["en"]
+	ipLocation.Country = record.Country.Names["en"]
+	ipLocation.City = record.City.Names["en"]
 
 	return ipLocation
 }

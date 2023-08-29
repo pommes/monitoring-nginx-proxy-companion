@@ -40,30 +40,31 @@ services:
     networks:
       - proxy-tier
 
-  monitoring-nginx-proxy-companion:
-    image: lukaskroepfl/monitoring-nginx-proxy-companion
+  nginx-proxy-metrics:
+    image: lukaskroepfl/nginx-proxy-metrics
     depends_on:
       - monitoring-influx-db
       - nginx-proxy
     restart: always
-    container_name: monitoring-nginx-proxy-companion
+    container_name: nginx-proxy-metrics
     environment:
       - PROXY_CONTAINER_NAME=nginx-proxy
-      - INFLUX_URL=http://monitoring-influx-db:8086
+      - INFLUX_URL=http://monitoring-influxdb-db:8086
       - INFLUX_DB_NAME=monitoring
+      - INFLUX_DB_RETENTION_DURATION=52w
       - INFLUX_DB_TAG_INSTANCE=my-instance
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
-      - /~monitoring-nginx-proxy-companion/data/GeoLite2-City.mmdb:/GeoLite2-City.mmdb:ro
+      - /~nginx-proxy-metrics/data/GeoLite2-City.mmdb:/GeoLite2-City.mmdb:ro
     networks:
       - proxy-tier
 
   monitoring-influx-db:
     image: influxdb:alpine
     restart: always
-    container_name: monitoring-influx-db
+    container_name: monitoring-influxdb-db
     volumes:
-      - "~/monitoring-influx-db/data:/var/lib/influxdb"
+      - "~/monitoring-influxdb-db/data:/var/lib/influxdb"
     networks:
       - proxy-tier
 

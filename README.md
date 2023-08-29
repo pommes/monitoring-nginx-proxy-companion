@@ -1,6 +1,6 @@
-# monitoring-nginx-proxy-companion [![Build Status](https://travis-ci.org/lukaskroepfl/monitoring-nginx-proxy-companion.svg?branch=master)](https://travis-ci.org/lukaskroepfl/monitoring-nginx-proxy-companion) [![Docker Pulls](https://img.shields.io/docker/pulls/lukaskroepfl/monitoring-nginx-proxy-companion.svg)]()
+# nginx-proxy-metrics [![Build Status](https://travis-ci.org/lukaskroepfl/nginx-proxy-metrics.svg?branch=master)](https://travis-ci.org/lukaskroepfl/nginx-proxy-metrics) [![Docker Pulls](https://img.shields.io/docker/pulls/lukaskroepfl/nginx-proxy-metrics.svg)]()
 
-monitoring-nginx-proxy-companion is a lightweight companion container for the [nginx-proxy](https://github.com/jwilder/nginx-proxy).
+nginx-proxy-metrics is a lightweight companion container for the [nginx-proxy](https://github.com/jwilder/nginx-proxy).
 
 ## Usage with docker-compose
 
@@ -11,17 +11,18 @@ Be sure to have the correct user-defined network set and adapt `PROXY_CONTAINER_
 name. (the full `docker-compose.yml` can be found in the root of this repository)
 
 ```yml
-  monitoring-nginx-proxy-companion:
-    image: tyranus/monitoring-nginx-proxy-companion
+  nginx-proxy-metrics:
+    image: tyranus/nginx-proxy-metrics
     depends_on:
-      - monitoring-influx-db
+      - monitoring-influxdb-db
       - nginx-proxy
     restart: always
-    container_name: monitoring-nginx-proxy-companion
+    container_name: nginx-proxy-metrics
     environment:
       - PROXY_CONTAINER_NAME=nginx-proxy
-      - INFLUX_URL=http://monitoring-influx-db:8086
+      - INFLUX_URL=http://monitoring-influxdb-db:8086
       - INFLUX_DB_NAME=monitoring
+      - INFLUX_DB_RETENTION_DURATION=52w
       - INFLUX_DB_TAG_INSTANCE=my-instance
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
@@ -31,9 +32,9 @@ name. (the full `docker-compose.yml` can be found in the root of this repository
   monitoring-influx-db:
     image: influxdb:alpine
     restart: always
-    container_name: monitoring-influx-db
+    container_name: monitoring-influxdb-db
     volumes:
-      - "~/monitoring-influx-db/data:/var/lib/influxdb"
+      - "~/monitoring-influxdb-db/data:/var/lib/influxdb"
     networks:
       - proxy-tier
       
@@ -50,7 +51,7 @@ name. (the full `docker-compose.yml` can be found in the root of this repository
     - proxy-tier
 ```
 
-The `monitoring-nginx-proxy-companion` creates an influxdb database on startup with the name set by `INFLUX_DB_NAME` if necessary.
+The `nginx-proxy-metrics` creates an influxdb database on startup with the name set by `INFLUX_DB_NAME` if necessary.
 The variable `INFLUX_DB_TAG_INSTANCE` is used for *tagging* each InfluxDB entry with any passed value. This can be useful if you want to store data from different proxy instances in one InfluxDB (`INFLUX_DB_NAME`). Grafana has a common use pattern of repeating panels for different instances. This way it can be done with only one Grafana Datasource.
 
 ### 2) Start Services
@@ -61,12 +62,12 @@ docker-compose up -d
 
 ### 3) Add Grafana Datasource
 
-![add-datasource](https://raw.githubusercontent.com/lukaskroepfl/monitoring-nginx-proxy-companion/master/add-influx-datasource.png)
+![add-datasource](https://raw.githubusercontent.com/lukaskroepfl/nginx-proxy-metrics/master/add-influx-datasource.png)
 
 ### 4) Add Nginx Proxy Monitoring Dashboard
 
 You can simply import the dashboard I created by importing following json.
 
-`https://raw.githubusercontent.com/lukaskroepfl/monitoring-nginx-proxy-companion/master/grafana-dashboard.json`
+`https://raw.githubusercontent.com/lukaskroepfl/nginx-proxy-metrics/master/grafana-dashboard.json`
 
-![add-datasource](https://raw.githubusercontent.com/lukaskroepfl/monitoring-nginx-proxy-companion/master/dashboard.png)
+![add-datasource](https://raw.githubusercontent.com/lukaskroepfl/nginx-proxy-metrics/master/dashboard.png)

@@ -1,9 +1,7 @@
-package main
+package geoip
 
-type MockIpLookupService struct {}
+type MockIpLookupService struct{}
 
 func (mockIpLookupService MockIpLookupService) Lookup(ip string) IPLocation {
-  return IPLocation{
-
-  }
+	return IPLocation{}
 }

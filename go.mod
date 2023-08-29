@@ -1,4 +1,4 @@
-module monitoring-nginx-proxy-companion
+module nginx-proxy-metrics
 
 go 1.21.0
 

@@ -1,4 +1,4 @@
-package main
+package useragentparser
 
 import (
 	"github.com/mssola/useragent"
@@ -16,11 +16,11 @@ func (MssolaUserAgentParser) Parse(userAgentString string) UserAgent {
 	bot := ua.Bot()
 
 	userAgent := UserAgent{
-		mobile:         mobile,
-		bot:            bot,
-		browser:        browser,
-		browserVersion: browserVersion,
-		os:             os,
+		Mobile:         mobile,
+		Bot:            bot,
+		Browser:        browser,
+		BrowserVersion: browserVersion,
+		Os:             os,
 	}
 	/*
 		if os == "" {

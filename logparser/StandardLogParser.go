@@ -1,8 +1,10 @@
-package main
+package logparser
 
 import (
 	"errors"
 	"log"
+	"nginx-proxy-metrics/geoip"
+	"nginx-proxy-metrics/useragentparser"
 	"regexp"
 	"strconv"
 	"strings"
@@ -10,8 +12,8 @@ import (
 )
 
 type StandardLogParser struct {
-	userAgentParser IUserAgentParser
-	ipLookupService IIpLookupService
+	userAgentParser useragentparser.IUserAgentParser
+	ipLookupService geoip.IIpLookupService
 }
 
 const LOG_LINE_REGEX = `^\s*(\S+)\s+(\S+).+\[(.+)\]\s+"([^"]+)"\s+(\S+)\s+(\S+)\s+"([^"]+)"\s+"([^"]+)"($|\s+"([^"]+)"|\s+([0-9.]+))`
@@ -68,17 +70,17 @@ func (standardLogParser StandardLogParser) Parse(logLine string) (HttpRequest, e
 	}
 
 	httpRequest := HttpRequest{}
-	httpRequest.host = host
-	httpRequest.sourceIp = remoteAddress
-	httpRequest.timestamp = convertDateStringToTime(timestamp)
-	httpRequest.requestMethod = requestType
-	httpRequest.requestPath = requestPath
-	httpRequest.httpVersion = httpVersion
-	httpRequest.httpStatus = httpStatus
-	httpRequest.bodyBytesSent = bodyBytesSent
-	httpRequest.httpReferer = httpReferer
-	httpRequest.userAgent = userAgent
-	httpRequest.latency = latencyFloat
+	httpRequest.Host = host
+	httpRequest.SourceIp = remoteAddress
+	httpRequest.Timestamp = convertDateStringToTime(timestamp)
+	httpRequest.RequestMethod = requestType
+	httpRequest.RequestPath = requestPath
+	httpRequest.HttpVersion = httpVersion
+	httpRequest.HttpStatus = httpStatus
+	httpRequest.BodyBytesSent = bodyBytesSent
+	httpRequest.HttpReferer = httpReferer
+	httpRequest.UserAgent = userAgent
+	httpRequest.Latency = latencyFloat
 	httpRequest.xForwardedFor = xForwardedFor
 
 	parseUserAgentAndSetFields(standardLogParser.userAgentParser, userAgent, &httpRequest)
@@ -87,21 +89,21 @@ func (standardLogParser StandardLogParser) Parse(logLine string) (HttpRequest, e
 	return httpRequest, nil
 }
 
-func parseUserAgentAndSetFields(userAgentParser IUserAgentParser, userAgentString string, httpRequest *HttpRequest) {
+func parseUserAgentAndSetFields(userAgentParser useragentparser.IUserAgentParser, userAgentString string, httpRequest *HttpRequest) {
 	userAgent := userAgentParser.Parse(userAgentString)
 
-	httpRequest.browser = userAgent.browser
-	httpRequest.browserVersion = userAgent.browserVersion
-	httpRequest.os = userAgent.os
-	httpRequest.mobile = userAgent.mobile
-	httpRequest.bot = userAgent.bot
+	httpRequest.Browser = userAgent.Browser
+	httpRequest.BrowserVersion = userAgent.BrowserVersion
+	httpRequest.Os = userAgent.Os
+	httpRequest.Mobile = userAgent.Mobile
+	httpRequest.Bot = userAgent.Bot
 }
 
-func lookupIpAndSetFields(ipLookupService IIpLookupService, ip string, httpRequest *HttpRequest) {
+func lookupIpAndSetFields(ipLookupService geoip.IIpLookupService, ip string, httpRequest *HttpRequest) {
 	ipLocation := ipLookupService.Lookup(ip)
 
-	httpRequest.country = ipLocation.country
-	httpRequest.city = ipLocation.city
+	httpRequest.Country = ipLocation.Country
+	httpRequest.City = ipLocation.City
 }
 
 func convertDateStringToTime(dateString string) time.Time {

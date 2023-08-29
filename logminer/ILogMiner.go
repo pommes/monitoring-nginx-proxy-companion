@@ -1,5 +1,5 @@
-package main
+package logminer
 
 type ILogMiner interface {
-  Mine()
+	Mine()
 }

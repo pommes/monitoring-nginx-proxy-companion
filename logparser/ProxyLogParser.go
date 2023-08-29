@@ -1,15 +1,17 @@
-package main
+package logparser
 
 import (
 	"errors"
 	"fmt"
+	"nginx-proxy-metrics/geoip"
+	"nginx-proxy-metrics/useragentparser"
 	"regexp"
 	"strconv"
 )
 
 type ProxyLogParser struct {
-	userAgentParser IUserAgentParser
-	ipLookupService IIpLookupService
+	UserAgentParser useragentparser.IUserAgentParser
+	IpLookupService geoip.IIpLookupService
 }
 
 func (logParser ProxyLogParser) Parse(logLine string) (HttpRequest, error) {
@@ -29,21 +31,21 @@ func (logParser ProxyLogParser) Parse(logLine string) (HttpRequest, error) {
 	//fmt.Printf("%+v\n", result)
 
 	httpRequest := HttpRequest{}
-	httpRequest.host = result["hostname"]
-	httpRequest.sourceIp = result["remote_addr"]
-	httpRequest.timestamp = convertDateStringToTime(result["time_local"])
-	httpRequest.requestMethod = result["method"]
-	httpRequest.requestPath = result["path"]
-	httpRequest.httpVersion = result["protocol"]
-	httpRequest.httpStatus, _ = strconv.Atoi(result["status"])
-	httpRequest.bodyBytesSent, _ = strconv.Atoi(result["body_bytes_sent"])
-	httpRequest.httpReferer = result["referer"]
-	httpRequest.userAgent = result["user_agent"]
-	httpRequest.latency = 0.0
+	httpRequest.Host = result["hostname"]
+	httpRequest.SourceIp = result["remote_addr"]
+	httpRequest.Timestamp = convertDateStringToTime(result["time_local"])
+	httpRequest.RequestMethod = result["method"]
+	httpRequest.RequestPath = result["path"]
+	httpRequest.HttpVersion = result["protocol"]
+	httpRequest.HttpStatus, _ = strconv.Atoi(result["status"])
+	httpRequest.BodyBytesSent, _ = strconv.Atoi(result["body_bytes_sent"])
+	httpRequest.HttpReferer = result["referer"]
+	httpRequest.UserAgent = result["user_agent"]
+	httpRequest.Latency = 0.0
 	httpRequest.xForwardedFor = result["http_x_forwarded_for"]
 
-	parseUserAgentAndSetFields(logParser.userAgentParser, httpRequest.userAgent, &httpRequest)
-	lookupIpAndSetFields(logParser.ipLookupService, httpRequest.sourceIp, &httpRequest)
+	parseUserAgentAndSetFields(logParser.UserAgentParser, httpRequest.UserAgent, &httpRequest)
+	lookupIpAndSetFields(logParser.IpLookupService, httpRequest.SourceIp, &httpRequest)
 
 	return httpRequest, nil
 }
