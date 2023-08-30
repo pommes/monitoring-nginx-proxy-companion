@@ -27,6 +27,9 @@ jobs:
     - name: Test
       run: go test -v ./...
 
+    - name: Move binary
+      run: mkdir .build && mv main ./build
+
   build_and_publish_image:
     runs-on: ubuntu-latest
     steps:
