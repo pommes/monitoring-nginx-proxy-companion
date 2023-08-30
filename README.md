@@ -1,4 +1,5 @@
 # nginx-proxy-metrics 
+![example workflow](https://github.com/pommes/nginx-proxy-metrics/actions/workflows/build.yml/badge.svg)
 
 nginx-proxy-metrics is a lightweight companion container for the [nginx-proxy](https://github.com/jwilder/nginx-proxy).
 
