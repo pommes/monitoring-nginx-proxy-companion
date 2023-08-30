@@ -1,35 +1,46 @@
-package logparser
+package logline
 
 import (
 	"fmt"
 	"github.com/stretchr/testify/assert"
-	"log"
 	"nginx-proxy-metrics/geoip"
-	"nginx-proxy-metrics/useragentparser"
+	"nginx-proxy-metrics/useragent"
 	"regexp"
 	"testing"
 	"time"
 )
+
+var (
+	userAgentParser     = useragent.MssolaParser{}
+	mockIpLookupService = geoip.IPLocatorMock{}
+
+	logParser = ProxyParser{
+		UserAgentParser: userAgentParser,
+		IPLocator:       mockIpLookupService,
+	}
+)
+
+func failNowIfErr(t *testing.T, err error, line string) {
+	if err != nil {
+		t.Log(fmt.Sprintf("ERROR: Unexpected error: '%s'\n", line))
+		t.FailNow()
+	}
+}
+
+func failNowIfNoErr(t *testing.T, err error, line string) {
+	if err == nil {
+		t.Log(fmt.Sprintf("ERROR: Did expect error, but passed: '%s'\n", line))
+		t.FailNow()
+	}
+}
 
 func TestProxyLogParserLogLineErrorInProduction1(t *testing.T) {
 
 	line := `3.89.123.261 22.102.114.111 - - [29/Aug/2023:07:47:30 +0000] "GET /favicon.ico HTTP/1.1" 502 552 "" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_7_0) AppleWebKit/535.11 (KHTML, like Gecko) Chrome/17.0.963.56 Safari/535.11" "172.20.0.14:8007"`
 	//line := `fh-warzone.de 63.143.42.253 - - [27/Aug/2023:20:37:53 +0000] "HEAD /forum/      HTTP/1.1" 200 0   "http://fh-warzone.de" "Mozilla/5.0+(compatible; UptimeRobot/2.0; http://www.uptimerobot.com/)" "172.20.0.25:80"`
 
-	userAgentParser := useragentparser.MssolaUserAgentParser{}
-	mockIpLookupService := geoip.MockIpLookupService{}
-
-	standardLogParser := ProxyLogParser{
-		UserAgentParser: userAgentParser,
-		IpLookupService: mockIpLookupService,
-	}
-
-	httpRequest, err := standardLogParser.Parse(line)
-
-	if err != nil {
-		log.Println("ERROR: Line does not match:", line)
-		t.Fail()
-	}
+	httpRequest, err := logParser.Parse(line)
+	failNowIfErr(t, err, line)
 
 	ti := time.Unix(1693295250, 0)
 
@@ -50,26 +61,19 @@ func TestProxyLogParserLogLineErrorInProduction1(t *testing.T) {
 	assert.Equal(t, "172.20.0.14:8007", httpRequest.xForwardedFor)
 }
 
+func TestProxyLogParserLogLineErrorInProduction2(t *testing.T) {
+
+	line := `awstats.tyranus.de 181.214.164.109 - - [30/Aug/2023:08:07:07 +0000] ":\x92T\x05ib\xE8\x0Ek_V\x08\xDD=x\xAB\xC2\x13\x22\xB88\x1B\x01\x07\xA6\xB1~\xE0Ap\x8D\x96\xF3 \xB9\xDB\x0CEN#5h[\xE4\xC5\x16\xF7wBr=\xB1" 400 150 "-" "-" "-"`
+
+	_, err := logParser.Parse(line)
+	failNowIfNoErr(t, err, line) // only 1 whitespace found in block "<request-method> <path> <http-version>"
+}
+
 func TestProxyLogParserLogLineWithXForwardedFor(t *testing.T) {
-	//line := `blog.kroepfl.io 193.80.91.32 - - [27/May/2017:19:26:27 +0000] "GET /wp-content/uploads/2017/04/Untitled.png HTTP/1.1" 404 18000 "https://blog.kroepfl.io/" "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36" 1.234`
 	line := `zahlensender.net 2aff:e202:3001:1854:e::1 - - [27/May/2017:19:26:27 +0000] "GET /path/data/my-data.html HTTP/2.0" 200 20206 "-" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.6 Safari/605.1.15" "172.20.0.16:80"`
-	//line := `fh-warzone.de 63.143.42.253 - - [27/Aug/2023:20:37:53 +0000] "HEAD /forum/ HTTP/1.1" 200 0 "http://fh-warzone.de" "Mozilla/5.0+(compatible; UptimeRobot/2.0; http://www.uptimerobot.com/)" "172.20.0.25:80"`
-	//line := `devarcs.com 54.201.119.245 - - [27/Aug/2023:20:36:30 +0000] "GET / HTTP/1.1" 301 162 "-" "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/83.0.4103.97 Safari/537.36" "-"`
-	//line := `zahlensender.net 162.55.94.150 - - [27/Aug/2023:21:11:29 +0000] "GET /impuls/feed/m4a/ HTTP/2.0" 304 0 "-" "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/99.0.4844.51 Safari/537.36" "172.20.0.16:80"`
 
-	userAgentParser := useragentparser.MssolaUserAgentParser{}
-	mockIpLookupService := geoip.MockIpLookupService{}
-
-	standardLogParser := ProxyLogParser{
-		UserAgentParser: userAgentParser,
-		IpLookupService: mockIpLookupService,
-	}
-
-	httpRequest, err := standardLogParser.Parse(line)
-
-	if err != nil {
-		t.Fail()
-	}
+	httpRequest, err := logParser.Parse(line)
+	failNowIfErr(t, err, line)
 
 	ti := time.Unix(1495913187, 0)
 
@@ -91,24 +95,10 @@ func TestProxyLogParserLogLineWithXForwardedFor(t *testing.T) {
 }
 
 func TestProxyLogParserLogLineNoRegexMatch(t *testing.T) {
-	//line := `blog.kroepfl.io 193.80.91.32 - - [27/May/2017:19:26:27 +0000] "GET /wp-content/uploads/2017/04/Untitled.png HTTP/1.1" 404 18000 "https://blog.kroepfl.io/" "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.36" 1.234`
 	line := `zahlensender.net 2aff:e202:3001:1854:e::1 - - [27/May/2017:19:26:27 +0000] "GET /path/data/my-data.html HTTP/2.0" 200 20206 "-" "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/16.6 Safari/605.1.15" 1.234`
 
-	userAgentParser := useragentparser.MssolaUserAgentParser{}
-	mockIpLookupService := geoip.MockIpLookupService{}
-
-	standardLogParser := ProxyLogParser{
-		UserAgentParser: userAgentParser,
-		IpLookupService: mockIpLookupService,
-	}
-
-	_, err := standardLogParser.Parse(line)
-
-	if err != nil {
-		log.Println("error as expected:", err)
-		return
-	}
-	t.Fail()
+	_, err := logParser.Parse(line)
+	failNowIfNoErr(t, err, line)
 }
 
 func TestProxyLogLogParserImplementation(t *testing.T) {

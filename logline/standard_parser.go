@@ -1,27 +1,25 @@
-package logparser
+package logline
 
 import (
 	"errors"
 	"log"
 	"nginx-proxy-metrics/geoip"
-	"nginx-proxy-metrics/useragentparser"
+	"nginx-proxy-metrics/useragent"
 	"regexp"
 	"strconv"
 	"strings"
 	"time"
 )
 
-type StandardLogParser struct {
-	userAgentParser useragentparser.IUserAgentParser
-	ipLookupService geoip.IIpLookupService
+type StandardParser struct {
+	userAgentParser useragent.Parser
+	ipLookupService geoip.IPLocator
 }
 
-const LOG_LINE_REGEX = `^\s*(\S+)\s+(\S+).+\[(.+)\]\s+"([^"]+)"\s+(\S+)\s+(\S+)\s+"([^"]+)"\s+"([^"]+)"($|\s+"([^"]+)"|\s+([0-9.]+))`
+func (parserarser StandardParser) Parse(logLine string) (HttpRequest, error) {
+	const Regex = `^\s*(\S+)\s+(\S+).+\[(.+)\]\s+"([^"]+)"\s+(\S+)\s+(\S+)\s+"([^"]+)"\s+"([^"]+)"($|\s+"([^"]+)"|\s+([0-9.]+))`
 
-const STANDARD_LOG_LINE_DATE_FORMAT = "02/Jan/2006:15:04:05 +0000"
-
-func (standardLogParser StandardLogParser) Parse(logLine string) (HttpRequest, error) {
-	var logLineParserRegex = regexp.MustCompile(LOG_LINE_REGEX)
+	var logLineParserRegex = regexp.MustCompile(Regex)
 
 	logLineParserRegexResult := logLineParserRegex.FindStringSubmatch(logLine)
 	if len(logLineParserRegexResult) <= 0 {
@@ -83,13 +81,13 @@ func (standardLogParser StandardLogParser) Parse(logLine string) (HttpRequest, e
 	httpRequest.Latency = latencyFloat
 	httpRequest.xForwardedFor = xForwardedFor
 
-	parseUserAgentAndSetFields(standardLogParser.userAgentParser, userAgent, &httpRequest)
-	lookupIpAndSetFields(standardLogParser.ipLookupService, remoteAddress, &httpRequest)
+	parseUserAgentAndSetFields(parserarser.userAgentParser, userAgent, &httpRequest)
+	lookupIpAndSetFields(parserarser.ipLookupService, remoteAddress, &httpRequest)
 
 	return httpRequest, nil
 }
 
-func parseUserAgentAndSetFields(userAgentParser useragentparser.IUserAgentParser, userAgentString string, httpRequest *HttpRequest) {
+func parseUserAgentAndSetFields(userAgentParser useragent.Parser, userAgentString string, httpRequest *HttpRequest) {
 	userAgent := userAgentParser.Parse(userAgentString)
 
 	httpRequest.Browser = userAgent.Browser
@@ -99,7 +97,7 @@ func parseUserAgentAndSetFields(userAgentParser useragentparser.IUserAgentParser
 	httpRequest.Bot = userAgent.Bot
 }
 
-func lookupIpAndSetFields(ipLookupService geoip.IIpLookupService, ip string, httpRequest *HttpRequest) {
+func lookupIpAndSetFields(ipLookupService geoip.IPLocator, ip string, httpRequest *HttpRequest) {
 	ipLocation := ipLookupService.Lookup(ip)
 
 	httpRequest.Country = ipLocation.Country
@@ -107,7 +105,8 @@ func lookupIpAndSetFields(ipLookupService geoip.IIpLookupService, ip string, htt
 }
 
 func convertDateStringToTime(dateString string) time.Time {
-	t, err := time.Parse(STANDARD_LOG_LINE_DATE_FORMAT, dateString)
+	const DateFormat = "02/Jan/2006:15:04:05 +0000"
+	t, err := time.Parse(DateFormat, dateString)
 
 	if err != nil {
 		log.Fatal("Could not parse date string, reason: ", err)

@@ -1,25 +1,24 @@
-package logparser
+package logline
 
 import (
 	"errors"
-	"fmt"
 	"nginx-proxy-metrics/geoip"
-	"nginx-proxy-metrics/useragentparser"
+	"nginx-proxy-metrics/useragent"
 	"regexp"
 	"strconv"
 )
 
-type ProxyLogParser struct {
-	UserAgentParser useragentparser.IUserAgentParser
-	IpLookupService geoip.IIpLookupService
+type ProxyParser struct {
+	UserAgentParser useragent.Parser
+	IPLocator       geoip.IPLocator
 }
 
-func (logParser ProxyLogParser) Parse(logLine string) (HttpRequest, error) {
-	const LogLineProxyRegex = `^(?P<hostname>\S+) (?P<remote_addr>\S+) - (?P<remote_user>\S+) \[(?P<time_local>.+)\] "(?P<method>\S+) (?P<path>\S+) (?P<protocol>\S+)" (?P<status>\d{3}) (?P<body_bytes_sent>\S+) "(?P<referer>[^\"]*)" "(?P<user_agent>[^\"]*)" "(?P<http_x_forwarded_for>[^\"]*)"`
-	var logPattern = regexp.MustCompile(LogLineProxyRegex)
+func (parser ProxyParser) Parse(logLine string) (HttpRequest, error) {
+	const Regex = `^(?P<hostname>\S+) (?P<remote_addr>\S+) - (?P<remote_user>\S+) \[(?P<time_local>.+)\] "(?P<method>\S+) (?P<path>\S+) (?P<protocol>\S+)" (?P<status>\d{3}) (?P<body_bytes_sent>\S+) "(?P<referer>[^\"]*)" "(?P<user_agent>[^\"]*)" "(?P<http_x_forwarded_for>[^\"]*)"`
+	var logPattern = regexp.MustCompile(Regex)
 	match := logPattern.FindStringSubmatch(logLine)
 	if len(match) <= 0 {
-		return HttpRequest{}, errors.New(fmt.Sprintf("Log line did not match nginx-proxy log format: '%s'", logLine))
+		return HttpRequest{}, errors.New("log line did not match nginx-proxy log format")
 	}
 
 	result := make(map[string]string)
@@ -44,8 +43,8 @@ func (logParser ProxyLogParser) Parse(logLine string) (HttpRequest, error) {
 	httpRequest.Latency = 0.0
 	httpRequest.xForwardedFor = result["http_x_forwarded_for"]
 
-	parseUserAgentAndSetFields(logParser.UserAgentParser, httpRequest.UserAgent, &httpRequest)
-	lookupIpAndSetFields(logParser.IpLookupService, httpRequest.SourceIp, &httpRequest)
+	parseUserAgentAndSetFields(parser.UserAgentParser, httpRequest.UserAgent, &httpRequest)
+	lookupIpAndSetFields(parser.IPLocator, httpRequest.SourceIp, &httpRequest)
 
 	return httpRequest, nil
 }

@@ -1,4 +1,4 @@
-package useragentparser
+package useragent
 
 type UserAgent struct {
 	Browser        string
@@ -8,6 +8,6 @@ type UserAgent struct {
 	Bot            bool
 }
 
-type IUserAgentParser interface {
+type Parser interface {
 	Parse(userAgent string) UserAgent
 }

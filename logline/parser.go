@@ -1,4 +1,4 @@
-package logparser
+package logline
 
 import "time"
 
@@ -24,6 +24,6 @@ type HttpRequest struct {
 	Bot            bool
 }
 
-type ILogParser interface {
+type Parser interface {
 	Parse(logLine string) (HttpRequest, error)
 }

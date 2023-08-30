@@ -6,50 +6,27 @@ import (
 	"io"
 	"log"
 	"nginx-proxy-metrics/config"
-	"nginx-proxy-metrics/influxdb"
-	"nginx-proxy-metrics/logparser"
+	"nginx-proxy-metrics/logline"
+	"nginx-proxy-metrics/persistence"
 	"time"
 )
 
-const DOCKER_DAEMON_SOCKET = "unix:///var/run/docker.sock"
-
-const LOG_LINE_DELIMITER = '\n'
+const (
+	DockerDaemonSocket = "unix:///var/run/docker.sock"
+	LogLineDelimiter   = '\n'
+)
 
 type DockerContainerLogMiner struct {
-	HttpRequestPersistor influxdb.IHttpRequestPersistor
-	LogParser            logparser.ILogParser
+	HttpRequestPersister persistence.HttpRequestPersister
+	LoglineParser        logline.Parser
 }
 
-func (dockerContainerLogMiner DockerContainerLogMiner) ParseAndPersistStdPipesOutput(stdout, stderr io.Reader) {
-	listenToPipe := func(input io.Reader) {
-		buf := bufio.NewReader(input)
-
-		for {
-			line, _ := buf.ReadString(LOG_LINE_DELIMITER)
-
-			httpRequest, err := dockerContainerLogMiner.LogParser.Parse(line)
-			if err != nil {
-				log.Printf("Error while parsing log line, reason: %s, log line: %s", err, line)
-			} else {
-				dockerContainerLogMiner.HttpRequestPersistor.Persist(httpRequest)
-			}
-
-			time.Sleep(100 * time.Millisecond)
-		}
-	}
-
-	log.Println("Listening to stdout and stderr pipes.")
-
-	go listenToPipe(stdout)
-	go listenToPipe(stderr)
-}
-
-func (dockerContainerLogMiner *DockerContainerLogMiner) Mine() {
+func (logMiner *DockerContainerLogMiner) Mine() {
 	containerId := findProxyContainerId()
 
 	log.Println("Attaching container log listener.")
 
-	client, err := docker.NewClient(DOCKER_DAEMON_SOCKET)
+	client, err := docker.NewClient(DockerDaemonSocket)
 	if err != nil {
 		panic(err)
 	}
@@ -59,7 +36,7 @@ func (dockerContainerLogMiner *DockerContainerLogMiner) Mine() {
 	stdoutReader, stdoutWriter := io.Pipe()
 	stderrReader, stderrWriter := io.Pipe()
 
-	dockerContainerLogMiner.ParseAndPersistStdPipesOutput(stdoutReader, stderrReader)
+	logMiner.parseAndPersistStdPipesOutput(stdoutReader, stderrReader)
 
 	log.Println("Starting to get logs from docker daemon.")
 	for {
@@ -85,10 +62,34 @@ func (dockerContainerLogMiner *DockerContainerLogMiner) Mine() {
 	}
 }
 
+func (logMiner *DockerContainerLogMiner) parseAndPersistStdPipesOutput(stdout, stderr io.Reader) {
+	listenToPipe := func(input io.Reader) {
+		buf := bufio.NewReader(input)
+
+		for {
+			line, _ := buf.ReadString(LogLineDelimiter)
+
+			httpRequest, err := logMiner.LoglineParser.Parse(line)
+			if err != nil {
+				log.Printf("Error while parsing log line, reason: '%s', log line: '%s'", err, line)
+			} else {
+				logMiner.HttpRequestPersister.Persist(httpRequest)
+			}
+
+			time.Sleep(100 * time.Millisecond)
+		}
+	}
+
+	log.Println("Listening to stdout and stderr pipes.")
+
+	go listenToPipe(stdout)
+	go listenToPipe(stderr)
+}
+
 func findProxyContainerId() string {
 	log.Println("Finding proxy container.")
 
-	client, err := docker.NewClient(DOCKER_DAEMON_SOCKET)
+	client, err := docker.NewClient(DockerDaemonSocket)
 	if err != nil {
 		panic(err)
 	}

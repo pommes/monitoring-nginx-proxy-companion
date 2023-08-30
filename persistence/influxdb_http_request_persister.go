@@ -1,52 +1,52 @@
-package influxdb
+package persistence
 
 import (
 	"fmt"
 	"github.com/influxdata/influxdb1-client/v2"
 	"log"
 	"nginx-proxy-metrics/config"
-	"nginx-proxy-metrics/logparser"
+	"nginx-proxy-metrics/logline"
 	"strconv"
 )
 
-const SERIES_NAME = "http_requests"
+const SeriesName = "http_requests"
 
-type InfluxdbHttpRequestPersistor struct {
+type InfluxdbHttpRequestPersister struct {
 	influxClient client.Client
 }
 
-func (influxdbLogPersistor *InfluxdbHttpRequestPersistor) Setup() {
+func (persister *InfluxdbHttpRequestPersister) Setup() {
 	dbClient, err := client.NewHTTPClient(client.HTTPConfig{
 		Addr: config.InfluxUrl,
 	})
 
 	if err != nil {
-		log.Fatal("Could not setup influxdb client, reason: ", err)
+		log.Fatal("Could not setup persistence client, reason: ", err)
 	}
 
-	_, db_err := queryDB(dbClient, fmt.Sprintf("CREATE DATABASE %s", config.InfluxDbName))
-	if db_err != nil {
-		log.Fatal("Could not create database, reason: ", db_err)
+	_, dbErr := queryDB(dbClient, fmt.Sprintf("CREATE DATABASE %s", config.InfluxDbName))
+	if dbErr != nil {
+		log.Fatal("Could not create database, reason: ", dbErr)
 	}
 
 	log.Println(fmt.Sprintf("  - Altering retention policy %s_retention to %s", config.InfluxDbName, config.InfluxDbRetentionDuration))
-	_, db_err = queryDB(dbClient, fmt.Sprintf("ALTER RETENTION POLICY %s_retention ON %s DURATION %s DEFAULT",
+	_, dbErr = queryDB(dbClient, fmt.Sprintf("ALTER RETENTION POLICY %s_retention ON %s DURATION %s DEFAULT",
 		config.InfluxDbName, config.InfluxDbName, config.InfluxDbRetentionDuration))
-	if db_err != nil {
-		log.Println("  - Could not ALTER retention policy, reason: ", db_err)
+	if dbErr != nil {
+		log.Println("  - Could not ALTER retention policy, reason: ", dbErr)
 
 		log.Println(fmt.Sprintf("  - Creating retention policy %s_retention with %s", config.InfluxDbName, config.InfluxDbRetentionDuration))
-		_, db_err = queryDB(dbClient, fmt.Sprintf("CREATE RETENTION POLICY %s_retention ON %s DURATION %s REPLICATION 1 DEFAULT",
+		_, dbErr = queryDB(dbClient, fmt.Sprintf("CREATE RETENTION POLICY %s_retention ON %s DURATION %s REPLICATION 1 DEFAULT",
 			config.InfluxDbName, config.InfluxDbName, config.InfluxDbRetentionDuration))
-		if db_err != nil {
-			log.Println("  - Could not CREATE retention policy, reason: ", db_err)
+		if dbErr != nil {
+			log.Println("  - Could not CREATE retention policy, reason: ", dbErr)
 		}
 	}
 
-	influxdbLogPersistor.influxClient = dbClient
+	persister.influxClient = dbClient
 }
 
-func (influxLogPersistor InfluxdbHttpRequestPersistor) Persist(httpRequest logparser.HttpRequest) {
+func (persister InfluxdbHttpRequestPersister) Persist(httpRequest logline.HttpRequest) {
 	batchPoints, err := client.NewBatchPoints(client.BatchPointsConfig{
 		Database: config.InfluxDbName,
 	})
@@ -78,15 +78,15 @@ func (influxLogPersistor InfluxdbHttpRequestPersistor) Persist(httpRequest logpa
 		"latency":         httpRequest.Latency,
 	}
 
-	point, err := client.NewPoint(SERIES_NAME, tags, fields, httpRequest.Timestamp)
+	point, err := client.NewPoint(SeriesName, tags, fields, httpRequest.Timestamp)
 	if err != nil {
 		log.Fatal(err)
 	}
 
 	batchPoints.AddPoint(point)
 
-	if err := influxLogPersistor.influxClient.Write(batchPoints); err != nil {
-		log.Println("Could not insert into influxdb, reason:", err)
+	if err := persister.influxClient.Write(batchPoints); err != nil {
+		log.Println("Could not insert into persistence, reason:", err)
 		return
 	}
 }
