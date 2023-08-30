@@ -1,6 +1,6 @@
 module nginx-proxy-metrics
 
-go 1.21.0
+go 1.21
 
 require (
 	github.com/fsouza/go-dockerclient v1.9.8
