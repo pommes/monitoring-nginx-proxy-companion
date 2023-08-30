@@ -27,13 +27,8 @@ jobs:
     - name: Test
       run: go test -v ./...
 
-  build_and_publish_image:
-    needs: build_go
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - name: Build and push the image
-        run: |
-          docker login --username pommes --password ${{ secrets.GHCR_IMAGE_REGISTRY_SECRET }} ghcr.io
-          docker build . --tag ghcr.io/pommes/nginx-proxy-metrics:latest
-          docker push ghcr.io/pommes/nginx-proxy-metrics:latest
+    - name: Build and push the image
+      run: |
+        docker login --username pommes --password ${{ secrets.GHCR_IMAGE_REGISTRY_SECRET }} ghcr.io
+        docker build . --tag ghcr.io/pommes/nginx-proxy-metrics:latest
+        docker push ghcr.io/pommes/nginx-proxy-metrics:latest
