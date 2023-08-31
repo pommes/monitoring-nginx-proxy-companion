@@ -32,3 +32,19 @@ jobs:
         docker login --username pommes --password ${{ secrets.GHCR_IMAGE_REGISTRY_SECRET }} ghcr.io
         docker build . --tag ghcr.io/pommes/nginx-proxy-metrics:latest
         docker push ghcr.io/pommes/nginx-proxy-metrics:latest
+
+    - name: Release
+      if: startsWith(github.event.ref, 'refs/tags/v')
+      uses: brpaz/action-semantic-release@v1
+      with:
+          dry_run: "false"
+          install_plugins: "semantic-release-docker semantic-release-gcr"
+          branch: main
+      
+
+
+
+
+
+    
+    
