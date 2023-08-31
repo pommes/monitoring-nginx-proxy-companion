@@ -1,4 +1,4 @@
-.PHONY: .assert_colima_runs .assert_mybuilder_exists .assert_golang_exists .create_git_tag .push_git_tag
+.PHONY: .assert_colima_runs .assert_mybuilder_exists .assert_golang_exists .create_git_tag
 
 DOCKERX_BUILDER ?= mybuilder
 ARCH_TARGET ?= linux/amd64
@@ -7,7 +7,7 @@ TAG ?= latest
 NEXT_VERSION ?= 2023-6
 
 GHCR_IMAGE ?= ghcr.io/pommes/nginx-proxy-metrics
-GHCR_NEXT_VERSION ?= 0.9.0
+GHCR_NEXT_VERSION ?= v0.9.0
 
 # RUN TARGETS ##############
 
@@ -33,18 +33,13 @@ build_image_tag: .create_git_tag
 	export TAG=$(NEXT_VERSION) && \
 	$(MAKE) build_image_latest
 
-build_image_tag_ghcr: .push_git_tag
-	export IMAGE=$(GHCR_IMAGE) && \
-	export TAG=$(GHCR_NEXT_VERSION) && \
-	$(MAKE) build_image_latest
-
-
-# LIB TARGETS ##############
-
-.push_git_tag:
+release_ghcr:
 	export NEXT_VERSION=$(GHCR_NEXT_VERSION) && \
 	$(MAKE) .create_git_tag && \
 	git push
+
+
+# LIB TARGETS ##############
 
 .create_git_tag:
 	@if git tag -a $(NEXT_VERSION) -m "tag: $(NEXT_VERSION)"; then \
