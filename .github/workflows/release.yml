@@ -1,0 +1,32 @@
+# This workflow will release
+name: Release
+
+on:
+  workflow_run:
+    workflows: [ "Latest Build" ]
+    branches: [ main ]
+    types:
+      - completed
+
+jobs:
+
+  release:
+    runs-on: ubuntu-latest
+    if: github.event_name == 'push' && startsWith(github.ref, 'refs/tags/v')
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Release
+        uses: brpaz/action-semantic-release@v1
+        with:
+          dry_run: "false"
+          install_plugins: "semantic-release-docker semantic-release-gcr"
+          branch: main
+      
+
+
+
+
+
+    
+    

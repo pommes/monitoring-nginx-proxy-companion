@@ -36,7 +36,7 @@ build_image_tag: .create_git_tag
 release_ghcr:
 	export NEXT_VERSION=$(GHCR_NEXT_VERSION) && \
 	$(MAKE) .create_git_tag && \
-	git push
+	git push origin $(GHCR_NEXT_VERSION)
 
 
 # LIB TARGETS ##############
