@@ -15,6 +15,8 @@ jobs:
 
   build_latest:
     runs-on: ubuntu-latest
+    env:
+      IMAGE: ghcr.io/pommes/nginx-proxy-metrics
     steps:
     - uses: actions/checkout@v3
 
@@ -33,7 +35,26 @@ jobs:
       run: |
         docker login --username pommes --password ${{ secrets.GHCR_IMAGE_REGISTRY_SECRET }} ghcr.io
         docker build . --tag ghcr.io/pommes/nginx-proxy-metrics:latest
-        docker push ghcr.io/pommes/nginx-proxy-metrics:latest
+        docker push ${IMAGE}:latest
+
+    - name: Release with Tag
+      if: startsWith(github.ref, 'refs/tags/v')
+      run: |
+        FULL_VERSION=$(echo ${GITHUB_REF#refs/tags/v})
+        MAJOR_MINOR_VERSION=$(echo ${FULL_VERSION} | cut -d. -f1-2)
+        MAJOR_VERSION=$(echo ${FULL_VERSION} | cut -d. -f1)
+        
+        docker login --username pommes --password ${{ secrets.GHCR_IMAGE_REGISTRY_SECRET }} ghcr.io
+        
+        docker build . --tag ${IMAGE}:${FULL_VERSION}
+        docker push ${IMAGE}:${FULL_VERSION}
+        
+        docker tag${IMAGE}:${FULL_VERSION} ${IMAGE}:${MAJOR_MINOR_VERSION}
+        docker push ${IMAGE}:${MAJOR_MINOR_VERSION}
+        
+        docker tag${IMAGE}:${FULL_VERSION} ${IMAGE}:${MAJOR_VERSION}
+        docker push ${IMAGE}:${MAJOR_VERSION}
+
 
       
 
