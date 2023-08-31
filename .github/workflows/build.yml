@@ -23,13 +23,13 @@ jobs:
       with:
         go-version: '1.20'
 
-    - name: Build
+    - name: Build Go
       run: CGO_ENABLED=0 GOOS=linux GOARCH=amd64 go build -o ./.build/main ./cmd
 
-    - name: Test
+    - name: Test Go
       run: go test -v ./...
 
-    - name: Build and push the image
+    - name: Build and push latest image
       run: |
         docker login --username pommes --password ${{ secrets.GHCR_IMAGE_REGISTRY_SECRET }} ghcr.io
         docker build . --tag ghcr.io/pommes/nginx-proxy-metrics:latest

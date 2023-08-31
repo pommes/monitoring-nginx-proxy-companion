@@ -7,7 +7,7 @@ TAG ?= latest
 NEXT_VERSION ?= 2023-6
 
 GHCR_IMAGE ?= ghcr.io/pommes/nginx-proxy-metrics
-GHCR_NEXT_VERSION ?= v0.9.0
+GHCR_NEXT_VERSION ?= v0.9.1
 
 # RUN TARGETS ##############
 
