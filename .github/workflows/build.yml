@@ -49,10 +49,10 @@ jobs:
         docker build . --tag ${IMAGE}:${FULL_VERSION}
         docker push ${IMAGE}:${FULL_VERSION}
         
-        docker tag${IMAGE}:${FULL_VERSION} ${IMAGE}:${MAJOR_MINOR_VERSION}
+        docker tag ${IMAGE}:${FULL_VERSION} ${IMAGE}:${MAJOR_MINOR_VERSION}
         docker push ${IMAGE}:${MAJOR_MINOR_VERSION}
         
-        docker tag${IMAGE}:${FULL_VERSION} ${IMAGE}:${MAJOR_VERSION}
+        docker tag ${IMAGE}:${FULL_VERSION} ${IMAGE}:${MAJOR_VERSION}
         docker push ${IMAGE}:${MAJOR_VERSION}
 
 
