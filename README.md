@@ -63,7 +63,7 @@ docker-compose up -d
 
 ### 3) Add Grafana Datasource
 
-![add-datasource](grafana-add-influx-datasource.png)
+![add-datasource](.doc/grafana-add-influx-datasource.png)
 
 ### 4) Add Nginx Proxy Monitoring Dashboard
 
@@ -71,8 +71,8 @@ You can simply import the dashboard I created by importing following json files:
 
 [grafana-dashboard.json](https://raw.githubusercontent.com/pommes/nginx-proxy-metrics/master/grafana-dashboard.json)
 
-![Grafana Dashboard](grafana-dashboard.png)
+![Grafana Dashboard](.doc/grafana-dashboard.png)
 
 [grafana-dashboard-request-details.json](https://raw.githubusercontent.com/pommes/nginx-proxy-metrics/master/grafana-dashboard-request-details.json)
 
-![Grafana Dashboard Request Details](grafana-dashboard-request-details.png)
+![Grafana Dashboard Request Details](.doc/grafana-dashboard-request-details.png)
