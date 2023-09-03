@@ -11,7 +11,7 @@ type GeoLite2Locator struct{}
 func (locator GeoLite2Locator) Lookup(ip string) IPLocation {
 	db, err := geoip2.Open("GeoLite2-City.mmdb")
 	if err != nil {
-		log.Fatal(err)
+		log.Fatal("geolite2_locator: Error opening geolite2 database:", err)
 	}
 	defer db.Close()
 
@@ -19,7 +19,7 @@ func (locator GeoLite2Locator) Lookup(ip string) IPLocation {
 
 	record, err := db.City(parsedIp)
 	if err != nil {
-		log.Fatal(err)
+		log.Fatal("geolite2_locator: Error parsing city for ip:", err)
 	}
 
 	ipLocation := IPLocation{}
