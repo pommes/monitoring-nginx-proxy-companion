@@ -15,3 +15,4 @@ Preparation for semantic releases, use commit prefixes as defined in
 
 ## Links
 * [semantic-relase](https://semantic-release.gitbook.io)
+* [go-styleguide](https://github.com/bahlo/go-styleguide)
