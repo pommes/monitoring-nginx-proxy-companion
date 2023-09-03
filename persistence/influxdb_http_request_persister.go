@@ -80,7 +80,7 @@ func (persister InfluxdbHttpRequestPersister) Persist(httpRequest logline.HttpRe
 
 	point, err := client.NewPoint(SeriesName, tags, fields, httpRequest.Timestamp)
 	if err != nil {
-		log.Fatal(err)
+		log.Fatal("influxdb_http_request_persister: Error creating new point:", err)
 	}
 
 	batchPoints.AddPoint(point)
