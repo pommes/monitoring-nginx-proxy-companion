@@ -7,6 +7,7 @@ import (
 	"nginx-proxy-metrics/config"
 	"nginx-proxy-metrics/logline"
 	"strconv"
+	"strings"
 )
 
 const SeriesName = "http_requests"
@@ -67,6 +68,7 @@ func (persister InfluxdbHttpRequestPersister) Persist(httpRequest logline.HttpRe
 		"city":            httpRequest.City,
 		"instance":        config.InfluxDbTagInstance,
 		"bot":             strconv.FormatBool(httpRequest.Bot),
+		"source_ip_area":  getSourceIpArea(httpRequest.SourceIp),
 	}
 
 	fields := map[string]interface{}{
@@ -89,6 +91,16 @@ func (persister InfluxdbHttpRequestPersister) Persist(httpRequest logline.HttpRe
 		log.Println("Could not insert into persistence, reason:", err)
 		return
 	}
+}
+
+func getSourceIpArea(ip string) string {
+	localSourceIpSlice := strings.Split(config.LocalSourceIPs, ",")
+	for _, prefix := range localSourceIpSlice {
+		if strings.HasPrefix(ip, strings.TrimSpace(prefix)) {
+			return "local"
+		}
+	}
+	return "public"
 }
 
 func queryDB(clnt client.Client, cmd string) (res []client.Result, err error) {

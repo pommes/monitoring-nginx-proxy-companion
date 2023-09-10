@@ -12,6 +12,7 @@ var (
 	InfluxDbName              = getEnvOrPanic("INFLUX_DB_NAME")
 	InfluxDbRetentionDuration = getEnvOrPanic("INFLUX_DB_RETENTION_DURATION")
 	InfluxDbTagInstance       = getEnvOrPanic("INFLUX_DB_TAG_INSTANCE")
+	LocalSourceIPs            = getEnvOrPanic("INFLUX_DB_TAG_SOURCE_IPS_LOCAL")
 )
 
 func getEnvOrPanic(envName string) string {

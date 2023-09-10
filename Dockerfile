@@ -5,6 +5,7 @@ LABEL org.opencontainers.image.description="nginx-proxy-metrics parses nginx-pro
 ENV PROXY_CONTAINER_NAME nginx
 ENV INFLUX_DB_NAME monitoring
 ENV INFLUX_DB_RETENTION_DURATION 8w
+ENV INFLUX_DB_TAG_SOURCE_IPS_LOCAL "127., 10., 192., 176."
 
 VOLUME /GeoLite2-City.mmdb
 COPY .build/main /main

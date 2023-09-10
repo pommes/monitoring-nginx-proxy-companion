@@ -25,6 +25,7 @@ name. (the full `docker-compose.yml` can be found in the root of this repository
       - INFLUX_DB_NAME=monitoring
       - INFLUX_DB_RETENTION_DURATION=52w
       - INFLUX_DB_TAG_INSTANCE=my-instance
+      - INFLUX_DB_TAG_SOURCE_IPS_LOCAL="127., 10., 192., 176."
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
     networks:
