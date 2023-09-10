@@ -1,7 +1,9 @@
 package main
 
 import (
+	client "github.com/influxdata/influxdb1-client/v2"
 	"log"
+	"nginx-proxy-metrics/config"
 	"nginx-proxy-metrics/geoip"
 	"nginx-proxy-metrics/logline"
 	"nginx-proxy-metrics/logminer"
@@ -10,13 +12,21 @@ import (
 )
 
 func main() {
-	log.Println("Starting nginx-proxy-metrics.")
+	log.Println("Loading config.")
+	config.LoadConfig()
 
 	log.Println("Creating dependencies of log miner.")
 
 	log.Println("Creating persistence client.")
 	httpRequestPersister := persistence.InfluxdbHttpRequestPersister{}
-	httpRequestPersister.Setup()
+	dbClient, err := client.NewHTTPClient(client.HTTPConfig{
+		Addr: config.InfluxUrl,
+	})
+
+	if err != nil {
+		log.Fatal("Could not setup persistence client, reason: ", err)
+	}
+	httpRequestPersister.NewInfluxdbHttpRequestPersister(dbClient)
 
 	log.Println("Creating user agent parser, ip lookup service and log parser.")
 	loglineParser := logline.ProxyParser{

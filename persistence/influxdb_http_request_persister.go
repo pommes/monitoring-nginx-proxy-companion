@@ -16,14 +16,7 @@ type InfluxdbHttpRequestPersister struct {
 	influxClient client.Client
 }
 
-func (persister *InfluxdbHttpRequestPersister) Setup() {
-	dbClient, err := client.NewHTTPClient(client.HTTPConfig{
-		Addr: config.InfluxUrl,
-	})
-
-	if err != nil {
-		log.Fatal("Could not setup persistence client, reason: ", err)
-	}
+func (persister *InfluxdbHttpRequestPersister) NewInfluxdbHttpRequestPersister(dbClient client.Client) {
 
 	_, dbErr := queryDB(dbClient, fmt.Sprintf("CREATE DATABASE %s", config.InfluxDbName))
 	if dbErr != nil {
@@ -94,7 +87,7 @@ func (persister InfluxdbHttpRequestPersister) Persist(httpRequest logline.HttpRe
 }
 
 func getSourceIpArea(ip string) string {
-	localSourceIpSlice := strings.Split(config.LocalSourceIPs, ",")
+	localSourceIpSlice := strings.Split(config.InfluxDbTagSourceIpsLocal, ",")
 	for _, prefix := range localSourceIpSlice {
 		if strings.HasPrefix(ip, strings.TrimSpace(prefix)) {
 			return "local"
