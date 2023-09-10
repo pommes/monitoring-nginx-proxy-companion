@@ -76,7 +76,13 @@
         "y": 1
       },
       "id": 7,
-      "links": [],
+      "links": [
+        {
+          "targetBlank": true,
+          "title": "Show single requests",
+          "url": "d/a233125f-5389-4573-bb2c-0bb5f76a6cfc/http-proxy-request-details?orgId=1&${jobs:queryparam}﻿﻿﻿﻿﻿&﻿${request_target:queryparam}﻿&${source_ip_area:queryparam}&var-http_status=All&${__url_time_range}"
+        }
+      ],
       "maxDataPoints": 100,
       "options": {
         "colorMode": "value",
@@ -102,6 +108,8 @@
           "measurement": "http_requests",
           "orderByTime": "ASC",
           "policy": "default",
+          "query": "SELECT count(\"source_ip\") FROM \"http_requests\" WHERE (\"host\"::tag =~ /^$request_target$/ AND \"instance\"::tag =~ /^$jobs$/) AND ($source_ip_area = 'All' OR \"source_ip_area\"::tag =~ /$source_ip_area$/) AND $timeFilter",
+          "rawQuery": true,
           "refId": "A",
           "resultFormat": "time_series",
           "select": [
@@ -123,6 +131,12 @@
               "key": "host::tag",
               "operator": "=~",
               "value": "/^$request_target$/"
+            },
+            {
+              "condition": "AND",
+              "key": "instance::tag",
+              "operator": "=~",
+              "value": "/^$jobs$/"
             }
           ]
         }
@@ -212,6 +226,8 @@
           "measurement": "http_requests",
           "orderByTime": "ASC",
           "policy": "default",
+          "query": "SELECT count(\"source_ip\") AS \"5xx count\" FROM \"http_requests\" WHERE (\"host\"::tag =~ /^$request_target$/ AND \"bot\"::tag = 'true' AND \"instance\"::tag =~ /^$jobs$/) AND ($source_ip_area = 'All' OR \"source_ip_area\"::tag =~ /$source_ip_area$/) AND $timeFilter",
+          "rawQuery": true,
           "refId": "part",
           "resultFormat": "table",
           "select": [
@@ -245,6 +261,12 @@
               "key": "bot::tag",
               "operator": "=",
               "value": "true"
+            },
+            {
+              "condition": "AND",
+              "key": "instance::tag",
+              "operator": "=~",
+              "value": "/^$jobs$/"
             }
           ]
         },
@@ -260,6 +282,8 @@
           "measurement": "http_requests",
           "orderByTime": "ASC",
           "policy": "default",
+          "query": "SELECT count(\"source_ip\") AS \"overall count\" FROM \"http_requests\" WHERE (\"host\"::tag =~ /^$request_target$/ AND \"instance\"::tag =~ /^$jobs$/) AND ($source_ip_area = 'All' OR \"source_ip_area\"::tag =~ /$source_ip_area$/) AND $timeFilter",
+          "rawQuery": true,
           "refId": "overall",
           "resultFormat": "table",
           "select": [
@@ -287,6 +311,12 @@
               "key": "host::tag",
               "operator": "=~",
               "value": "/^$request_target$/"
+            },
+            {
+              "condition": "AND",
+              "key": "instance::tag",
+              "operator": "=~",
+              "value": "/^$jobs$/"
             }
           ]
         },
@@ -395,6 +425,8 @@
           "measurement": "http_requests",
           "orderByTime": "ASC",
           "policy": "default",
+          "query": "SELECT count(\"source_ip\") AS \"5xx count\" FROM \"http_requests\" WHERE (\"host\"::tag =~ /^$request_target$/ AND \"http_status\"::tag =~ /^5..$/ AND \"instance\"::tag =~ /^$jobs$/) AND ($source_ip_area = 'All' OR \"source_ip_area\"::tag =~ /$source_ip_area$/) AND $timeFilter",
+          "rawQuery": true,
           "refId": "5xx",
           "resultFormat": "table",
           "select": [
@@ -428,6 +460,12 @@
               "key": "http_status::tag",
               "operator": "=~",
               "value": "/^5..$/"
+            },
+            {
+              "condition": "AND",
+              "key": "instance::tag",
+              "operator": "=~",
+              "value": "/^$jobs$/"
             }
           ]
         },
@@ -443,6 +481,8 @@
           "measurement": "http_requests",
           "orderByTime": "ASC",
           "policy": "default",
+          "query": "SELECT count(\"source_ip\") AS \"overall count\" FROM \"http_requests\" WHERE (\"host\"::tag =~ /^$request_target$/ AND \"instance\"::tag =~ /^$jobs$/) AND ($source_ip_area = 'All' OR \"source_ip_area\"::tag =~ /$source_ip_area$/) AND $timeFilter",
+          "rawQuery": true,
           "refId": "overall",
           "resultFormat": "table",
           "select": [
@@ -470,6 +510,12 @@
               "key": "host::tag",
               "operator": "=~",
               "value": "/^$request_target$/"
+            },
+            {
+              "condition": "AND",
+              "key": "instance::tag",
+              "operator": "=~",
+              "value": "/^$jobs$/"
             }
           ]
         },
@@ -580,6 +626,8 @@
           "measurement": "http_requests",
           "orderByTime": "ASC",
           "policy": "default",
+          "query": "SELECT mean(\"body_bytes_sent\") FROM \"http_requests\" WHERE (\"host\"::tag =~ /^$request_target$/ AND \"instance\"::tag =~ /^$jobs$/) AND ($source_ip_area = 'All' OR \"source_ip_area\"::tag =~ /$source_ip_area$/) AND $timeFilter GROUP BY time($__interval) fill(null)",
+          "rawQuery": true,
           "refId": "A",
           "resultFormat": "time_series",
           "select": [
@@ -601,6 +649,12 @@
               "key": "host::tag",
               "operator": "=~",
               "value": "/^$request_target$/"
+            },
+            {
+              "condition": "AND",
+              "key": "instance::tag",
+              "operator": "=~",
+              "value": "/^$jobs$/"
             }
           ]
         }
@@ -753,6 +807,8 @@
           "measurement": "http_requests",
           "orderByTime": "ASC",
           "policy": "default",
+          "query": "SELECT count(\"source_ip\") AS \"Number of Requests\" FROM \"http_requests\" WHERE (\"host\"::tag =~ /^$request_target$/ AND \"instance\"::tag =~ /^$jobs$/) AND ($source_ip_area = 'All' OR \"source_ip_area\"::tag =~ /$source_ip_area$/) AND $timeFilter GROUP BY \"country\"::tag",
+          "rawQuery": true,
           "refId": "Requests by countries",
           "resultFormat": "table",
           "select": [
@@ -780,6 +836,12 @@
               "key": "host::tag",
               "operator": "=~",
               "value": "/^$request_target$/"
+            },
+            {
+              "condition": "AND",
+              "key": "instance::tag",
+              "operator": "=~",
+              "value": "/^$jobs$/"
             }
           ]
         },
@@ -800,6 +862,8 @@
           "measurement": "http_requests",
           "orderByTime": "ASC",
           "policy": "autogen",
+          "query": "SELECT count(\"source_ip\") AS \"Number of Requests\" FROM \"http_requests\" WHERE (\"host\"::tag =~ /^$request_target$/) AND ($source_ip_area = 'All' OR \"source_ip_area\"::tag =~ /$source_ip_area$/) AND $timeFilter GROUP BY \"city\"::tag",
+          "rawQuery": true,
           "refId": "Request by Cities",
           "resultFormat": "table",
           "select": [
@@ -850,7 +914,7 @@
             {
               "targetBlank": true,
               "title": "Show log entries",
-              "url": "https://prom-grafana.tyranus.de/d/a233125f-5389-4573-bb2c-0bb5f76a6cfc/http-proxy-request-details?orgId=1&from=${__from}﻿﻿﻿&to=$t﻿﻿﻿${__to}﻿﻿﻿﻿&${request_target:queryparam}&var-http_status=﻿﻿${__field.labels.http_status}"
+              "url": "/d/a233125f-5389-4573-bb2c-0bb5f76a6cfc/http-proxy-request-details?orgId=1&${jobs:queryparam}﻿﻿﻿﻿﻿&﻿${request_target:queryparam}﻿&var-http_status=﻿﻿﻿${__field.labels.http_status}﻿&${source_ip_area:queryparam}&${__url_time_range}"
             }
           ],
           "mappings": [
@@ -934,6 +998,8 @@
           "measurement": "http_requests",
           "orderByTime": "ASC",
           "policy": "default",
+          "query": "SELECT count(\"source_ip\") FROM \"http_requests\" WHERE (\"host\"::tag =~ /^$request_target$/ AND \"http_status\"::tag =~ /^4..|5..$/ AND \"instance\"::tag =~ /^$jobs$/) AND ($source_ip_area = 'All' OR \"source_ip_area\"::tag =~ /$source_ip_area$/) AND $timeFilter GROUP BY \"http_status\"::tag",
+          "rawQuery": true,
           "refId": "A",
           "resultFormat": "time_series",
           "select": [
@@ -961,6 +1027,12 @@
               "key": "http_status::tag",
               "operator": "=~",
               "value": "/^4..|5..$/"
+            },
+            {
+              "condition": "AND",
+              "key": "instance::tag",
+              "operator": "=~",
+              "value": "/^$jobs$/"
             }
           ]
         },
@@ -976,6 +1048,8 @@
           "measurement": "http_requests",
           "orderByTime": "ASC",
           "policy": "default",
+          "query": "SELECT count(\"source_ip\") FROM \"http_requests\" WHERE (\"host\"::tag =~ /^$request_target$/ AND \"instance\"::tag =~ /^$jobs$/) AND ($source_ip_area = 'All' OR \"source_ip_area\"::tag =~ /$source_ip_area$/) AND $timeFilter",
+          "rawQuery": true,
           "refId": "B",
           "resultFormat": "time_series",
           "select": [
@@ -997,6 +1071,12 @@
               "key": "host::tag",
               "operator": "=~",
               "value": "/^$request_target$/"
+            },
+            {
+              "condition": "AND",
+              "key": "instance::tag",
+              "operator": "=~",
+              "value": "/^$jobs$/"
             }
           ]
         },
@@ -1103,8 +1183,8 @@
           "measurement": "http_requests",
           "orderByTime": "ASC",
           "policy": "default",
-          "query": "SELECT count(\"source_ip\") FROM \"default\".\"http_requests\" WHERE (\"host\"::tag =~ /^$Request_Target$/) AND $timeFilter Group By \"host\"::tag",
-          "rawQuery": false,
+          "query": "SELECT count(\"source_ip\") FROM \"http_requests\" WHERE (\"host\"::tag =~ /^$request_target$/ AND \"instance\"::tag =~ /^$jobs$/) AND ($source_ip_area = 'All' OR \"source_ip_area\"::tag =~ /$source_ip_area$/) AND $timeFilter GROUP BY \"host\"::tag",
+          "rawQuery": true,
           "refId": "A",
           "resultFormat": "time_series",
           "select": [
@@ -1126,6 +1206,12 @@
               "key": "host::tag",
               "operator": "=~",
               "value": "/^$request_target$/"
+            },
+            {
+              "condition": "AND",
+              "key": "instance::tag",
+              "operator": "=~",
+              "value": "/^$jobs$/"
             }
           ]
         }
@@ -1284,6 +1370,8 @@
           "measurement": "http_requests",
           "orderByTime": "ASC",
           "policy": "default",
+          "query": "SELECT count(\"source_ip\") FROM \"http_requests\" WHERE (\"host\"::tag =~ /^$request_target$/) AND ($source_ip_area = 'All' OR \"source_ip_area\"::tag =~ /$source_ip_area$/) AND $timeFilter GROUP BY time($__interval), \"host\" fill(null)",
+          "rawQuery": true,
           "refId": "A",
           "resultFormat": "time_series",
           "select": [
@@ -1332,6 +1420,8 @@
           "measurement": "http_requests",
           "orderByTime": "ASC",
           "policy": "default",
+          "query": "SELECT count(\"source_ip\") FROM \"http_requests\" WHERE (\"host\"::tag =~ /^$request_target$/ AND \"instance\"::tag =~ /^$jobs$/) AND ($source_ip_area = 'All' OR \"source_ip_area\"::tag =~ /$source_ip_area$/) AND $timeFilter GROUP BY time($__interval) fill(null)",
+          "rawQuery": true,
           "refId": "B",
           "resultFormat": "time_series",
           "select": [
@@ -1353,6 +1443,12 @@
               "key": "host::tag",
               "operator": "=~",
               "value": "/^$request_target$/"
+            },
+            {
+              "condition": "AND",
+              "key": "instance::tag",
+              "operator": "=~",
+              "value": "/^$jobs$/"
             }
           ]
         }
@@ -1464,6 +1560,8 @@
           "measurement": "http_requests",
           "orderByTime": "ASC",
           "policy": "default",
+          "query": "SELECT count(\"source_ip\") FROM \"http_requests\" WHERE (\"host\"::tag =~ /^$request_target$/ AND \"instance\"::tag =~ /^$jobs$/) AND ($source_ip_area = 'All' OR \"source_ip_area\"::tag =~ /$source_ip_area$/) AND $timeFilter GROUP BY \"http_status\"::tag",
+          "rawQuery": true,
           "refId": "A",
           "resultFormat": "time_series",
           "select": [
@@ -1485,6 +1583,12 @@
               "key": "host::tag",
               "operator": "=~",
               "value": "/^$request_target$/"
+            },
+            {
+              "condition": "AND",
+              "key": "instance::tag",
+              "operator": "=~",
+              "value": "/^$jobs$/"
             }
           ]
         }
@@ -1617,6 +1721,8 @@
           "measurement": "http_requests",
           "orderByTime": "ASC",
           "policy": "default",
+          "query": "SELECT count(\"source_ip\") FROM \"http_requests\" WHERE (\"host\"::tag =~ /^$request_target$/ AND \"instance\"::tag =~ /^$jobs$/) AND ($source_ip_area = 'All' OR \"source_ip_area\"::tag =~ /$source_ip_area$/) AND $timeFilter GROUP BY time($__interval), \"http_status\" fill(null)",
+          "rawQuery": true,
           "refId": "B",
           "resultFormat": "time_series",
           "select": [
@@ -1638,6 +1744,12 @@
               "key": "host::tag",
               "operator": "=~",
               "value": "/^$request_target$/"
+            },
+            {
+              "condition": "AND",
+              "key": "instance::tag",
+              "operator": "=~",
+              "value": "/^$jobs$/"
             }
           ]
         },
@@ -1665,6 +1777,8 @@
           "measurement": "http_requests",
           "orderByTime": "ASC",
           "policy": "default",
+          "query": "SELECT count(\"source_ip\") FROM \"http_requests\" WHERE (\"host\"::tag =~ /^$request_target$/ AND \"instance\"::tag =~ /^$jobs$/) AND ($source_ip_area = 'All' OR \"source_ip_area\"::tag =~ /$source_ip_area$/) AND $timeFilter GROUP BY time($__interval) fill(null)",
+          "rawQuery": true,
           "refId": "A",
           "resultFormat": "time_series",
           "select": [
@@ -1686,6 +1800,12 @@
               "key": "host::tag",
               "operator": "=~",
               "value": "/^$request_target$/"
+            },
+            {
+              "condition": "AND",
+              "key": "instance::tag",
+              "operator": "=~",
+              "value": "/^$jobs$/"
             }
           ]
         }
@@ -1796,6 +1916,8 @@
           "measurement": "http_requests",
           "orderByTime": "ASC",
           "policy": "default",
+          "query": "SELECT count(\"source_ip\") FROM \"http_requests\" WHERE (\"host\"::tag =~ /^$request_target$/ AND \"instance\"::tag =~ /^$jobs$/) AND ($source_ip_area = 'All' OR \"source_ip_area\"::tag =~ /$source_ip_area$/) AND $timeFilter GROUP BY \"request_method\"::tag",
+          "rawQuery": true,
           "refId": "A",
           "resultFormat": "time_series",
           "select": [
@@ -1817,6 +1939,12 @@
               "key": "host::tag",
               "operator": "=~",
               "value": "/^$request_target$/"
+            },
+            {
+              "condition": "AND",
+              "key": "instance::tag",
+              "operator": "=~",
+              "value": "/^$jobs$/"
             }
           ]
         }
@@ -1936,6 +2064,8 @@
           "measurement": "http_requests",
           "orderByTime": "ASC",
           "policy": "default",
+          "query": "SELECT count(\"source_ip\") FROM \"http_requests\" WHERE (\"host\"::tag =~ /^$request_target$/ AND \"instance\"::tag =~ /^$jobs$/) AND ($source_ip_area = 'All' OR \"source_ip_area\"::tag =~ /$source_ip_area$/) AND $timeFilter GROUP BY time($__interval), \"request_method\" fill(null)",
+          "rawQuery": true,
           "refId": "B",
           "resultFormat": "time_series",
           "select": [
@@ -1957,6 +2087,12 @@
               "key": "host::tag",
               "operator": "=~",
               "value": "/^$request_target$/"
+            },
+            {
+              "condition": "AND",
+              "key": "instance::tag",
+              "operator": "=~",
+              "value": "/^$jobs$/"
             }
           ]
         },
@@ -1984,6 +2120,8 @@
           "measurement": "http_requests",
           "orderByTime": "ASC",
           "policy": "default",
+          "query": "SELECT count(\"source_ip\") FROM \"http_requests\" WHERE (\"host\"::tag =~ /^$request_target$/ AND \"instance\"::tag =~ /^$jobs$/) AND ($source_ip_area = 'All' OR \"source_ip_area\"::tag =~ /$source_ip_area$/) AND $timeFilter GROUP BY time($__interval) fill(null)",
+          "rawQuery": true,
           "refId": "A",
           "resultFormat": "time_series",
           "select": [
@@ -2005,6 +2143,12 @@
               "key": "host::tag",
               "operator": "=~",
               "value": "/^$request_target$/"
+            },
+            {
+              "condition": "AND",
+              "key": "instance::tag",
+              "operator": "=~",
+              "value": "/^$jobs$/"
             }
           ]
         }
@@ -2111,6 +2255,8 @@
           "measurement": "http_requests",
           "orderByTime": "ASC",
           "policy": "default",
+          "query": "SELECT count(\"source_ip\") FROM \"http_requests\" WHERE (\"host\"::tag =~ /^$request_target$/ AND \"source_ip\"::field !~ /^(127|172).*$/ AND \"instance\"::tag =~ /^$jobs$/) AND ($source_ip_area = 'All' OR \"source_ip_area\"::tag =~ /$source_ip_area$/) AND $timeFilter GROUP BY \"country\"",
+          "rawQuery": true,
           "refId": "A",
           "resultFormat": "time_series",
           "select": [
@@ -2138,6 +2284,12 @@
               "key": "source_ip::field",
               "operator": "!~",
               "value": "/^(127|172).*$/"
+            },
+            {
+              "condition": "AND",
+              "key": "instance::tag",
+              "operator": "=~",
+              "value": "/^$jobs$/"
             }
           ]
         },
@@ -2153,6 +2305,8 @@
           "measurement": "http_requests",
           "orderByTime": "ASC",
           "policy": "default",
+          "query": "SELECT count(\"source_ip\") FROM \"http_requests\" WHERE (\"host\"::tag =~ /^$request_target$/ AND \"source_ip\"::field =~ /^(127|172).*$/ AND \"instance\"::tag =~ /^$jobs$/) AND ($source_ip_area = 'All' OR \"source_ip_area\"::tag =~ /$source_ip_area$/) AND $timeFilter",
+          "rawQuery": true,
           "refId": "B",
           "resultFormat": "time_series",
           "select": [
@@ -2180,6 +2334,12 @@
               "key": "source_ip::field",
               "operator": "=~",
               "value": "/^(127|172).*$/"
+            },
+            {
+              "condition": "AND",
+              "key": "instance::tag",
+              "operator": "=~",
+              "value": "/^$jobs$/"
             }
           ]
         }
@@ -2233,7 +2393,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               },
               {
                 "color": "red",
@@ -2310,6 +2471,8 @@
           "measurement": "http_requests",
           "orderByTime": "ASC",
           "policy": "default",
+          "query": "SELECT count(\"source_ip\") FROM \"http_requests\" WHERE (\"host\"::tag =~ /^$request_target$/ AND \"source_ip\"::field !~ /^(127|172).*$/ AND \"instance\"::tag =~ /^$jobs$/) AND ($source_ip_area = 'All' OR \"source_ip_area\"::tag =~ /$source_ip_area$/) AND $timeFilter GROUP BY time($__interval), \"country\" fill(null)",
+          "rawQuery": true,
           "refId": "A",
           "resultFormat": "time_series",
           "select": [
@@ -2337,6 +2500,12 @@
               "key": "source_ip::field",
               "operator": "!~",
               "value": "/^(127|172).*$/"
+            },
+            {
+              "condition": "AND",
+              "key": "instance::tag",
+              "operator": "=~",
+              "value": "/^$jobs$/"
             }
           ]
         },
@@ -2365,6 +2534,8 @@
           "measurement": "http_requests",
           "orderByTime": "ASC",
           "policy": "default",
+          "query": "SELECT count(\"source_ip\") FROM \"http_requests\" WHERE (\"host\"::tag =~ /^$request_target$/ AND \"source_ip\"::field =~ /^(127|172).*$/ AND \"instance\"::tag =~ /^$jobs$/) AND ($source_ip_area = 'All' OR \"source_ip_area\"::tag =~ /$source_ip_area$/) AND $timeFilter GROUP BY time($__interval) fill(null)",
+          "rawQuery": true,
           "refId": "C",
           "resultFormat": "time_series",
           "select": [
@@ -2392,54 +2563,12 @@
               "key": "source_ip::field",
               "operator": "=~",
               "value": "/^(127|172).*$/"
-            }
-          ]
-        },
-        {
-          "alias": "All",
-          "datasource": {
-            "type": "influxdb",
-            "uid": "b38c69e3-73a6-43b0-9198-47fc0ed37c57"
-          },
-          "dsType": "influxdb",
-          "groupBy": [
-            {
-              "params": [
-                "$__interval"
-              ],
-              "type": "time"
             },
             {
-              "params": [
-                "null"
-              ],
-              "type": "fill"
-            }
-          ],
-          "measurement": "http_requests",
-          "orderByTime": "ASC",
-          "policy": "default",
-          "refId": "B",
-          "resultFormat": "time_series",
-          "select": [
-            [
-              {
-                "params": [
-                  "source_ip"
-                ],
-                "type": "field"
-              },
-              {
-                "params": [],
-                "type": "count"
-              }
-            ]
-          ],
-          "tags": [
-            {
-              "key": "host::tag",
+              "condition": "AND",
+              "key": "instance::tag",
               "operator": "=~",
-              "value": "/^$request_target$/"
+              "value": "/^$jobs$/"
             }
           ]
         }
@@ -2569,6 +2698,8 @@
           "measurement": "http_requests",
           "orderByTime": "ASC",
           "policy": "default",
+          "query": "SELECT count(\"source_ip\") FROM \"http_requests\" WHERE (\"host\"::tag =~ /^$request_target$/ AND \"bot\"::tag = 'false' AND \"instance\"::tag =~ /^$jobs$/) AND ($source_ip_area = 'All' OR \"source_ip_area\"::tag =~ /$source_ip_area$/) AND $timeFilter GROUP BY \"browser\"::tag",
+          "rawQuery": true,
           "refId": "A",
           "resultFormat": "time_series",
           "select": [
@@ -2596,6 +2727,12 @@
               "key": "bot::tag",
               "operator": "=",
               "value": "false"
+            },
+            {
+              "condition": "AND",
+              "key": "instance::tag",
+              "operator": "=~",
+              "value": "/^$jobs$/"
             }
           ]
         }
@@ -2650,7 +2787,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               },
               {
                 "color": "red",
@@ -2727,6 +2865,8 @@
           "measurement": "http_requests",
           "orderByTime": "ASC",
           "policy": "default",
+          "query": "SELECT count(\"source_ip\") FROM \"http_requests\" WHERE (\"host\"::tag =~ /^$request_target$/ AND \"bot\"::tag = 'false' AND \"instance\"::tag =~ /^$jobs$/) AND ($source_ip_area = 'All' OR \"source_ip_area\"::tag =~ /$source_ip_area$/) AND $timeFilter GROUP BY time($__interval), \"browser\" fill(null)",
+          "rawQuery": true,
           "refId": "A",
           "resultFormat": "time_series",
           "select": [
@@ -2754,6 +2894,12 @@
               "key": "bot::tag",
               "operator": "=",
               "value": "false"
+            },
+            {
+              "condition": "AND",
+              "key": "instance::tag",
+              "operator": "=~",
+              "value": "/^$jobs$/"
             }
           ]
         },
@@ -2781,6 +2927,8 @@
           "measurement": "http_requests",
           "orderByTime": "ASC",
           "policy": "default",
+          "query": "SELECT count(\"source_ip\") FROM \"http_requests\" WHERE (\"host\"::tag =~ /^$request_target$/ AND \"bot\"::tag = 'false' AND \"instance\"::tag =~ /^$jobs$/) AND ($source_ip_area = 'All' OR \"source_ip_area\"::tag =~ /$source_ip_area$/) AND $timeFilter GROUP BY time($__interval) fill(null)",
+          "rawQuery": true,
           "refId": "B",
           "resultFormat": "time_series",
           "select": [
@@ -2808,6 +2956,12 @@
               "key": "bot::tag",
               "operator": "=",
               "value": "false"
+            },
+            {
+              "condition": "AND",
+              "key": "instance::tag",
+              "operator": "=~",
+              "value": "/^$jobs$/"
             }
           ]
         }
@@ -2923,6 +3077,8 @@
           "measurement": "http_requests",
           "orderByTime": "ASC",
           "policy": "default",
+          "query": "SELECT count(\"source_ip\") FROM \"http_requests\" WHERE (\"host\"::tag =~ /^$request_target$/ AND \"bot\"::tag = 'false' AND \"instance\"::tag =~ /^$jobs$/) AND ($source_ip_area = 'All' OR \"source_ip_area\"::tag =~ /$source_ip_area$/) AND $timeFilter GROUP BY \"os\"::tag",
+          "rawQuery": true,
           "refId": "A",
           "resultFormat": "time_series",
           "select": [
@@ -2950,6 +3106,12 @@
               "key": "bot::tag",
               "operator": "=",
               "value": "false"
+            },
+            {
+              "condition": "AND",
+              "key": "instance::tag",
+              "operator": "=~",
+              "value": "/^$jobs$/"
             }
           ]
         }
@@ -3004,7 +3166,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               },
               {
                 "color": "red",
@@ -3081,6 +3244,8 @@
           "measurement": "http_requests",
           "orderByTime": "ASC",
           "policy": "default",
+          "query": "SELECT count(\"source_ip\") FROM \"http_requests\" WHERE (\"host\"::tag =~ /^$request_target$/ AND \"bot\"::tag = 'false' AND \"instance\"::tag =~ /^$jobs$/) AND ($source_ip_area = 'All' OR \"source_ip_area\"::tag =~ /$source_ip_area$/) AND $timeFilter GROUP BY time($__interval), \"os\" fill(null)",
+          "rawQuery": true,
           "refId": "A",
           "resultFormat": "time_series",
           "select": [
@@ -3108,6 +3273,12 @@
               "key": "bot::tag",
               "operator": "=",
               "value": "false"
+            },
+            {
+              "condition": "AND",
+              "key": "instance::tag",
+              "operator": "=~",
+              "value": "/^$jobs$/"
             }
           ]
         },
@@ -3135,6 +3306,8 @@
           "measurement": "http_requests",
           "orderByTime": "ASC",
           "policy": "default",
+          "query": "SELECT count(\"source_ip\") FROM \"http_requests\" WHERE (\"host\"::tag =~ /^$request_target$/ AND \"instance\"::tag =~ /^$jobs$/) AND ($source_ip_area = 'All' OR \"source_ip_area\"::tag =~ /$source_ip_area$/) AND $timeFilter GROUP BY time($__interval) fill(null)",
+          "rawQuery": true,
           "refId": "B",
           "resultFormat": "time_series",
           "select": [
@@ -3156,6 +3329,12 @@
               "key": "host::tag",
               "operator": "=~",
               "value": "/^$request_target$/"
+            },
+            {
+              "condition": "AND",
+              "key": "instance::tag",
+              "operator": "=~",
+              "value": "/^$jobs$/"
             }
           ]
         }
@@ -3285,6 +3464,8 @@
           "measurement": "http_requests",
           "orderByTime": "ASC",
           "policy": "default",
+          "query": "SELECT count(\"source_ip\") FROM \"http_requests\" WHERE (\"host\"::tag =~ /^$request_target$/ AND \"bot\"::tag = 'true' AND \"instance\"::tag =~ /^$jobs$/) AND ($source_ip_area = 'All' OR \"source_ip_area\"::tag =~ /$source_ip_area$/) AND $timeFilter GROUP BY \"browser\"::tag",
+          "rawQuery": true,
           "refId": "A",
           "resultFormat": "time_series",
           "select": [
@@ -3312,6 +3493,12 @@
               "key": "bot::tag",
               "operator": "=",
               "value": "true"
+            },
+            {
+              "condition": "AND",
+              "key": "instance::tag",
+              "operator": "=~",
+              "value": "/^$jobs$/"
             }
           ]
         }
@@ -3366,7 +3553,8 @@
             "mode": "absolute",
             "steps": [
               {
-                "color": "green"
+                "color": "green",
+                "value": null
               },
               {
                 "color": "red",
@@ -3443,6 +3631,8 @@
           "measurement": "http_requests",
           "orderByTime": "ASC",
           "policy": "default",
+          "query": "SELECT count(\"source_ip\") FROM \"http_requests\" WHERE (\"host\"::tag =~ /^$request_target$/ AND \"bot\"::tag = 'true' AND \"instance\"::tag =~ /^$jobs$/) AND ($source_ip_area = 'All' OR \"source_ip_area\"::tag =~ /$source_ip_area$/) AND $timeFilter GROUP BY time($__interval), \"browser\" fill(null)",
+          "rawQuery": true,
           "refId": "A",
           "resultFormat": "time_series",
           "select": [
@@ -3470,6 +3660,12 @@
               "key": "bot::tag",
               "operator": "=",
               "value": "true"
+            },
+            {
+              "condition": "AND",
+              "key": "instance::tag",
+              "operator": "=~",
+              "value": "/^$jobs$/"
             }
           ]
         },
@@ -3497,6 +3693,8 @@
           "measurement": "http_requests",
           "orderByTime": "ASC",
           "policy": "default",
+          "query": "SELECT count(\"source_ip\") FROM \"http_requests\" WHERE (\"host\"::tag =~ /^$request_target$/ AND \"bot\"::tag = 'true' AND \"instance\"::tag =~ /^$jobs$/) AND ($source_ip_area = 'All' OR \"source_ip_area\"::tag =~ /$source_ip_area$/) AND $timeFilter GROUP BY time($__interval) fill(null)",
+          "rawQuery": true,
           "refId": "B",
           "resultFormat": "time_series",
           "select": [
@@ -3524,6 +3722,12 @@
               "key": "bot::tag",
               "operator": "=",
               "value": "true"
+            },
+            {
+              "condition": "AND",
+              "key": "instance::tag",
+              "operator": "=~",
+              "value": "/^$jobs$/"
             }
           ]
         }
@@ -3535,9 +3739,35 @@
   "refresh": "",
   "schemaVersion": 38,
   "style": "dark",
-  "tags": [],
+  "tags": [
+    "http"
+  ],
   "templating": {
     "list": [
+      {
+        "current": {
+          "selected": false,
+          "text": "tyranus.de",
+          "value": "tyranus.de"
+        },
+        "datasource": {
+          "type": "influxdb",
+          "uid": "b38c69e3-73a6-43b0-9198-47fc0ed37c57"
+        },
+        "definition": "SHOW TAG VALUES FROM \"http_requests\" WITH KEY = \"instance\"",
+        "hide": 0,
+        "includeAll": false,
+        "label": "Jobs",
+        "multi": false,
+        "name": "jobs",
+        "options": [],
+        "query": "SHOW TAG VALUES FROM \"http_requests\" WITH KEY = \"instance\"",
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      },
       {
         "current": {
           "selected": true,
@@ -3552,19 +3782,53 @@
           "type": "influxdb",
           "uid": "b38c69e3-73a6-43b0-9198-47fc0ed37c57"
         },
-        "definition": "SHOW TAG VALUES FROM \"http_requests\" WITH KEY = \"host\"",
+        "definition": "SHOW TAG VALUES FROM \"http_requests\" WITH KEY = \"host\" WHERE \"instance\"::tag =~ /^$jobs$/",
         "hide": 0,
         "includeAll": true,
         "label": "Request Target",
         "multi": true,
         "name": "request_target",
         "options": [],
-        "query": "SHOW TAG VALUES FROM \"http_requests\" WITH KEY = \"host\"",
+        "query": "SHOW TAG VALUES FROM \"http_requests\" WITH KEY = \"host\" WHERE \"instance\"::tag =~ /^$jobs$/",
         "refresh": 1,
         "regex": "",
         "skipUrlSync": false,
         "sort": 1,
         "type": "query"
+      },
+      {
+        "current": {
+          "selected": true,
+          "text": "All",
+          "value": "$__all"
+        },
+        "description": "Values: local, public",
+        "hide": 0,
+        "includeAll": true,
+        "label": "Source IP Area",
+        "multi": false,
+        "name": "source_ip_area",
+        "options": [
+          {
+            "selected": true,
+            "text": "All",
+            "value": "$__all"
+          },
+          {
+            "selected": false,
+            "text": "local",
+            "value": "local"
+          },
+          {
+            "selected": false,
+            "text": "public",
+            "value": "public"
+          }
+        ],
+        "query": "local,public",
+        "queryValue": "",
+        "skipUrlSync": false,
+        "type": "custom"
       }
     ]
   },
@@ -3600,6 +3864,6 @@
   "timezone": "browser",
   "title": "Nginx Proxy Monitoring",
   "uid": "db511739-bf12-40c5-82ef-da30400032ec",
-  "version": 47,
+  "version": 72,
   "weekStart": ""
 }

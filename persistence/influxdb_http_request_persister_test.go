@@ -15,23 +15,19 @@ type MockClient struct {
 }
 
 func (m *MockClient) Ping(timeout time.Duration) (time.Duration, string, error) {
-	//TODO implement me
-	panic("implement me")
+	panic("not implemented in mock")
 }
 
 func (m *MockClient) Write(bp client.BatchPoints) error {
-	//TODO implement me
-	panic("implement me")
+	panic("not implemented in mock")
 }
 
 func (m *MockClient) QueryAsChunk(q client.Query) (*client.ChunkedResponse, error) {
-	//TODO implement me
-	panic("implement me")
+	panic("not implemented in mock")
 }
 
 func (m *MockClient) Close() error {
-	//TODO implement me
-	panic("implement me")
+	panic("not implemented in mock")
 }
 
 // Hier sollten Sie alle Methoden mocken, die von dem InfluxDB-Client aufgerufen werden könnten

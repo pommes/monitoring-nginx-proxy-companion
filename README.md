@@ -3,9 +3,16 @@
 
 nginx-proxy-metrics is a lightweight companion container for the [nginx-proxy](https://github.com/jwilder/nginx-proxy).
 
-## Usage with docker-compose
+![Grafana Dashboard](.doc/grafana-dashboard.png)
+The main dashboard shows typical HTTP log stats.
 
-### 1) docker-compose.yml
+
+![Grafana Dashboard Request Details](.doc/grafana-dashboard-request-details.png)
+From there you cann drill down and filter log lines.  
+
+## Set up with docker-compose
+
+### 1) Set up with docker-compose.yml
 
 If you are already using docker-compose for your nginx-proxy setup you need to add two services shown below to it.
 Be sure to have the correct user-defined network set and adapt `PROXY_CONTAINER_NAME` to your proxy's container
@@ -13,7 +20,7 @@ name. (the full `docker-compose.yml` can be found in the root of this repository
 
 ```yml
   nginx-proxy-metrics:
-    image: tyranus/nginx-proxy-metrics
+    image: ghcr.io/pommes/nginx-proxy-metrics:latest:1.1.0
     depends_on:
       - monitoring-influxdb-db
       - nginx-proxy
@@ -23,11 +30,12 @@ name. (the full `docker-compose.yml` can be found in the root of this repository
       - PROXY_CONTAINER_NAME=nginx-proxy
       - INFLUX_URL=http://monitoring-influxdb-db:8086
       - INFLUX_DB_NAME=monitoring
-      - INFLUX_DB_RETENTION_DURATION=52w
+      - INFLUX_DB_RETENTION_DURATION=4w
       - INFLUX_DB_TAG_INSTANCE=my-instance
-      - INFLUX_DB_TAG_SOURCE_IPS_LOCAL="127., 10., 192., 176."
+      - INFLUX_DB_TAG_SOURCE_IPS_LOCAL="127., 10., 192.168., 172.20., fe80::, fd00::"
     volumes:
       - /var/run/docker.sock:/var/run/docker.sock:ro
+      - "./data/nginx-proxy-exporter/GeoLite2-City.mmdb:/GeoLite2-City.mmdb:ro"
     networks:
       - proxy-tier
 
@@ -54,7 +62,20 @@ name. (the full `docker-compose.yml` can be found in the root of this repository
 ```
 
 The `nginx-proxy-metrics` creates an influxdb database on startup with the name set by `INFLUX_DB_NAME` if necessary.
-The variable `INFLUX_DB_TAG_INSTANCE` is used for *tagging* each InfluxDB entry with any passed value. This can be useful if you want to store data from different proxy instances in one InfluxDB (`INFLUX_DB_NAME`). Grafana has a common use pattern of repeating panels for different instances. This way it can be done with only one Grafana Datasource.
+
+The variable `INFLUX_DB_TAG_INSTANCE` is used for *tagging* each InfluxDB entry with any passed value. This can be useful if you want to store data from different proxy instances in one InfluxDB (`INFLUX_DB_NAME`). Grafana has a common use pattern of repeating panels for different instances. This way it can be done with the same Grafana Datasource.
+
+With `INFLUX_DB_RETENTION_DURATION` you can control how long you want your logs remain in the DB.
+Note that if you change the retention duration that will only have affect on new log entries.
+
+With `INFLUX_DB_TAG_SOURCE_IPS_LOCAL` you are able to tag source IPs as local traffic. This can be useful later in dashboards if you want to have a closer look only on your local traffic or on public traffic.
+
+`nginx-proxy-metrics` uses *GeoLite2 Free Geolocation Data* for resolving countries from source IP Adresses.
+The image does not provide the database file `GeoLite2-City.mmdb`. 
+
+You have to provide it yourself as a volume (`- "./data/nginx-proxy-exporter/GeoLite2-City.mmdb:/GeoLite2-City.mmdb:ro")`.
+You can download the file from [dev.maxmind.com](https://dev.maxmind.com/geoip/geolite2-free-geolocation-data). You have to register an account but it is free.
+
 
 ### 2) Start Services
 
@@ -63,6 +84,7 @@ docker-compose up -d
 ```
 
 ### 3) Add Grafana Datasource
+In Grafana you have to add a new InfluxDB data source.
 
 ![add-datasource](.doc/grafana-add-influx-datasource.png)
 
@@ -70,10 +92,5 @@ docker-compose up -d
 
 You can simply import the dashboard I created by importing following json files:
 
-[grafana-dashboard.json](https://raw.githubusercontent.com/pommes/nginx-proxy-metrics/master/grafana-dashboard.json)
-
-![Grafana Dashboard](.doc/grafana-dashboard.png)
-
-[grafana-dashboard-request-details.json](https://raw.githubusercontent.com/pommes/nginx-proxy-metrics/master/grafana-dashboard-request-details.json)
-
-![Grafana Dashboard Request Details](.doc/grafana-dashboard-request-details.png)
+* [grafana-dashboard.json](https://raw.githubusercontent.com/pommes/nginx-proxy-metrics/master/grafana-dashboard.json)
+* [grafana-dashboard-request-details.json](https://raw.githubusercontent.com/pommes/nginx-proxy-metrics/master/grafana-dashboard-request-details.json)

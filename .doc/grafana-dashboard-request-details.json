@@ -31,16 +31,23 @@
       "fieldConfig": {
         "defaults": {
           "color": {
-            "mode": "thresholds"
+            "mode": "palette-classic-by-name"
           },
           "custom": {
             "align": "left",
             "cellOptions": {
-              "type": "auto"
+              "type": "color-text"
             },
             "filterable": true,
             "inspect": false
           },
+          "links": [
+            {
+              "targetBlank": true,
+              "title": "Open URL",
+              "url": "https://${__data.fields[\"Request Target Host\"]}${__data.fields[\"Request Target Path\"]}"
+            }
+          ],
           "mappings": [
             {
               "options": {
@@ -52,64 +59,72 @@
                   "index": 1,
                   "text": "OK"
                 },
-                "206000": {
+                "204000": {
                   "index": 2,
+                  "text": "No Content"
+                },
+                "206000": {
+                  "index": 3,
                   "text": "Partial Content"
                 },
                 "301000": {
-                  "index": 3,
+                  "index": 4,
                   "text": "Moved Permanently"
                 },
                 "302000": {
-                  "index": 4,
+                  "index": 5,
                   "text": "Found (Moved Temporarily)"
                 },
                 "304000": {
-                  "index": 5,
+                  "index": 6,
                   "text": "Not Modified"
                 },
                 "307000": {
-                  "index": 6,
+                  "index": 7,
                   "text": "Temporary Redirect"
                 },
                 "308000": {
-                  "index": 7,
+                  "index": 8,
                   "text": "Permanent Redirect"
                 },
                 "400000": {
-                  "index": 8,
+                  "index": 9,
                   "text": "Bad Request"
                 },
                 "401000": {
-                  "index": 9,
+                  "index": 10,
                   "text": "Unauthorized"
                 },
                 "403000": {
-                  "index": 10,
+                  "index": 11,
                   "text": "Forbidden"
                 },
                 "404000": {
-                  "index": 11,
+                  "index": 12,
                   "text": "Not Found"
                 },
+                "409000": {
+                  "index": 13,
+                  "text": "Conflict"
+                },
                 "499000": {
-                  "index": 16,
+                  "index": 14,
                   "text": "The request should be retried after doing the appropriate action"
                 },
                 "500000": {
-                  "index": 12,
+                  "index": 15,
                   "text": "Internal Server Error"
                 },
                 "501000": {
-                  "index": 13,
+                  "index": 16,
                   "text": "Not Implemented"
                 },
                 "502000": {
-                  "index": 14,
+                  "index": 17,
                   "text": "Bad Gateway"
                 },
                 "503000": {
-                  "index": 15,
+                  "index": 18,
                   "text": "Service Unavailable"
                 }
               },
@@ -223,7 +238,7 @@
             "properties": [
               {
                 "id": "custom.width",
-                "value": 283
+                "value": 235
               }
             ]
           },
@@ -247,7 +262,7 @@
             "properties": [
               {
                 "id": "custom.width",
-                "value": 713
+                "value": 883
               }
             ]
           },
@@ -338,7 +353,7 @@
           "measurement": "http_requests",
           "orderByTime": "ASC",
           "policy": "default",
-          "query": "SELECT \"http_status\", \"source_ip\", \"country\", \"bot\", \"browser\", \"request_method\", \"host\", \"request_path\" FROM \"http_requests\" WHERE (\"http_status\"::tag =~ /$http_status/ AND \"instance\"::tag = 'tyranus.de' AND \"host\"::tag =~ /$request_target/) AND $timeFilter",
+          "query": "SELECT \"http_status\", \"source_ip\", \"country\", \"bot\", \"browser\", \"request_method\", \"host\", \"request_path\" FROM \"http_requests\" WHERE (\"http_status\"::tag =~ /$http_status/ AND \"instance\"::tag =~/$jobs/  AND \"host\"::tag =~ /$request_target/) AND ($source_ip_area = 'All' OR \"source_ip_area\"::tag =~ /$source_ip_area$/) AND $timeFilter",
           "rawQuery": true,
           "refId": "A",
           "resultFormat": "table",
@@ -425,7 +440,9 @@
           "options": {
             "excludeByName": {
               "Time": false,
-              "request_method": false
+              "request_combined": true,
+              "request_method": false,
+              "request_url": true
             },
             "indexByName": {
               "Time": 0,
@@ -469,12 +486,36 @@
     "list": [
       {
         "current": {
-          "selected": true,
+          "selected": false,
+          "text": "tyranus.de",
+          "value": "tyranus.de"
+        },
+        "datasource": {
+          "type": "influxdb",
+          "uid": "b38c69e3-73a6-43b0-9198-47fc0ed37c57"
+        },
+        "definition": "SHOW TAG VALUES FROM \"http_requests\" WITH KEY = \"instance\"",
+        "hide": 0,
+        "includeAll": false,
+        "label": "Jobs",
+        "multi": false,
+        "name": "jobs",
+        "options": [],
+        "query": "SHOW TAG VALUES FROM \"http_requests\" WITH KEY = \"instance\"",
+        "refresh": 1,
+        "regex": "",
+        "skipUrlSync": false,
+        "sort": 0,
+        "type": "query"
+      },
+      {
+        "current": {
+          "selected": false,
           "text": [
-            "zahlensender.net"
+            "All"
           ],
           "value": [
-            "zahlensender.net"
+            "$__all"
           ]
         },
         "datasource": {
@@ -497,22 +538,12 @@
       },
       {
         "current": {
-          "selected": true,
+          "selected": false,
           "text": [
-            "101",
-            "400",
-            "401",
-            "409",
-            "500",
-            "503"
+            "404"
           ],
           "value": [
-            "101",
-            "400",
-            "401",
-            "409",
-            "500",
-            "503"
+            "404"
           ]
         },
         "datasource": {
@@ -533,6 +564,40 @@
         "skipUrlSync": false,
         "sort": 0,
         "type": "query"
+      },
+      {
+        "current": {
+          "selected": false,
+          "text": "All",
+          "value": "$__all"
+        },
+        "description": "Values: local, public",
+        "hide": 0,
+        "includeAll": true,
+        "label": "Source IP Area",
+        "multi": false,
+        "name": "source_ip_area",
+        "options": [
+          {
+            "selected": true,
+            "text": "All",
+            "value": "$__all"
+          },
+          {
+            "selected": false,
+            "text": "local",
+            "value": "local"
+          },
+          {
+            "selected": false,
+            "text": "public",
+            "value": "public"
+          }
+        ],
+        "query": "local, public",
+        "queryValue": "",
+        "skipUrlSync": false,
+        "type": "custom"
       }
     ]
   },
@@ -544,6 +609,6 @@
   "timezone": "",
   "title": "HTTP Proxy Request Details",
   "uid": "a233125f-5389-4573-bb2c-0bb5f76a6cfc",
-  "version": 12,
+  "version": 19,
   "weekStart": ""
 }
