@@ -1,5 +1,9 @@
 # nginx-proxy-metrics 
+![GitHub release (with filter)](https://img.shields.io/github/v/release/pommes/nginx-proxy-metrics)
+![GitHub Release Date - Published_At](https://img.shields.io/github/release-date/pommes/nginx-proxy-metrics)
 ![example workflow](https://github.com/pommes/nginx-proxy-metrics/actions/workflows/build.yml/badge.svg)
+![GitHub last commit (branch)](https://img.shields.io/github/last-commit/pommes/nginx-proxy-metrics/main)
+
 
 nginx-proxy-metrics is a lightweight companion container for the [nginx-proxy](https://github.com/jwilder/nginx-proxy).
 
