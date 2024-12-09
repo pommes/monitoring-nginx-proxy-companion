@@ -33,7 +33,7 @@ jobs:
 
     - name: Build and push latest image
       run: |
-        docker login --username pommes --password ${{ secrets.GHCR_IMAGE_REGISTRY_SECRET }} ghcr.io
+        docker login --username pommes --password-stdin ${{ secrets.GHCR_IMAGE_REGISTRY_SECRET }} ghcr.io
         docker build . --tag ghcr.io/pommes/nginx-proxy-metrics:latest
         docker push ${IMAGE}:latest
 
@@ -44,7 +44,7 @@ jobs:
         MAJOR_MINOR_VERSION=$(echo ${FULL_VERSION} | cut -d. -f1-2)
         MAJOR_VERSION=$(echo ${FULL_VERSION} | cut -d. -f1)
         
-        docker login --username pommes --password ${{ secrets.GHCR_IMAGE_REGISTRY_SECRET }} ghcr.io
+        docker login --username pommes --password-stdin ${{ secrets.GHCR_IMAGE_REGISTRY_SECRET }} ghcr.io
         
         docker build . --tag ${IMAGE}:${FULL_VERSION}
         docker push ${IMAGE}:${FULL_VERSION}
