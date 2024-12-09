@@ -53,6 +53,6 @@ func (parser ProxyParser) Parse(logLine string) (HttpRequest, error) {
 }
 
 func removeANSICodes(input string) string {
-	ansiEscapeRe := regexp.MustCompile(`\[[0-9;]*m`)
+	ansiEscapeRe := regexp.MustCompile(`\x1b\[[0-9;]*m`)
 	return ansiEscapeRe.ReplaceAllString(input, "")
 }
