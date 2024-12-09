@@ -29,6 +29,9 @@ func (parser ProxyParser) Parse(logLine string) (HttpRequest, error) {
 	}
 	//fmt.Printf("%+v\n", result)
 
+	// Data quality fixes
+	result["hostname"] = removeANSICodes(result["hostname"])
+
 	httpRequest := HttpRequest{}
 	httpRequest.Host = result["hostname"]
 	httpRequest.SourceIp = result["remote_addr"]
@@ -47,4 +50,9 @@ func (parser ProxyParser) Parse(logLine string) (HttpRequest, error) {
 	lookupIpAndSetFields(parser.IPLocator, httpRequest.SourceIp, &httpRequest)
 
 	return httpRequest, nil
+}
+
+func removeANSICodes(input string) string {
+	ansiEscapeRe := regexp.MustCompile(`\[[0-9;]*m`)
+	return ansiEscapeRe.ReplaceAllString(input, "")
 }

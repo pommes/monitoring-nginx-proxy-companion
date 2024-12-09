@@ -114,3 +114,13 @@ func TestProxyLogLogParserImplementation(t *testing.T) {
 	}
 	fmt.Printf("%+v\n", result)
 }
+
+func TestProxyLogRemovesANSICodesFromHostname(t *testing.T) {
+	line := `[0mprom-grafana.tyranus.de 127.0.0.1 - - [29/Aug/2023:07:47:30 +0000] "GET / HTTP/1.1" 200 12345 "-" "Mozilla/5.0" "-"`
+
+	httpRequest, err := logParser.Parse(line)
+	failNowIfErr(t, err, line)
+
+	expectedHost := "prom-grafana.tyranus.de"
+	assert.Equal(t, expectedHost, httpRequest.Host, "The hostname should have ANSI codes removed")
+}
