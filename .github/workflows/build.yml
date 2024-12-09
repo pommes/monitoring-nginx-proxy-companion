@@ -54,7 +54,7 @@ jobs:
         
         docker tag ${IMAGE}:${FULL_VERSION} ${IMAGE}:${MAJOR_VERSION}
         docker push ${IMAGE}:${MAJOR_VERSION}
-
+ 
 
       
 
